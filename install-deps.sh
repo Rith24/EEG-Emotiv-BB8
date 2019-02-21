@@ -11,7 +11,13 @@ sudo apt upgrade
 sudo apt install python python-pip bpython ipython libglib2.0-dev build-essential cmake qt5-default libboost-all-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev autotools-dev autoconf automake libtool python-dev python-opengl libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsmpeg-dev libsdl1.2-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libtiff5-dev libx11-6 libx11-dev fluid-soundfont-gm timgm6mb-soundfont xfonts-base xfonts-100dpi xfonts-75dpi xfonts-cyrillic fontconfig fonts-freefont-ttf libfreetype6-dev
 # Install Python Packages
 sudo python -m pip install -U bluepy
-python -m pip install -U pycrypto pytest future numpy scipy mne pygame
+sudo python -m pip install -U pycrypto
+sudo python -m pip install -U pytest
+sudo python -m pip install -U future
+sudo python -m pip install -U numpy
+sudo python -m pip install -U scipy
+sudo python -m pip install -U mne
+sudo python -m pip install -U pygame
 
 mkdir -p ~/Documents/GitHub
 
