@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -x
+
 # Update
 sudo apt update
 sudo apt upgrade
