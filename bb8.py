@@ -4,9 +4,10 @@
 
 from bluepy import btle
 
-import time
+# import time
 
 MAC_ADDR = 'F2:D8:37:4B:CE:F1'
+
 
 class BB8(btle.DefaultDelegate):
     def __init__(self, deviceAddress):
@@ -35,7 +36,9 @@ class BB8(btle.DefaultDelegate):
         self.wakecpu.write('\x01', withResponse=True)
 
     def getSpheroCharacteristic(self, fragment):
-        return self.peripheral.getCharacteristics(uuid='22bb746f'+fragment+'75542d6f726568705327')[0]
+        return self.peripheral.getCharacteristics(uuid='22bb746f' +
+                                                  fragment +
+                                                  '75542d6f726568705327')[0]
 
     def dumpCharacteristics(self):
         for s in self.peripheral.getServices():
@@ -46,18 +49,19 @@ class BB8(btle.DefaultDelegate):
     def cmd(self, did, cid, data=[], answer=True, resetTimeout=True):
         # Commands are as specified in Sphero API 1.50 PDF.
         # https://github.com/orbotix/DeveloperResources/
-        seq = (self.seq&255)
+        seq = (self.seq & 255)
         self.seq += 1
         sop2 = 0xfc
         sop2 |= 1 if answer else 0
         sop2 |= 2 if resetTimeout else 0
-        dlen = len(data)+1
-        chk = (sum(data)+did+cid+seq+dlen)&255
+        dlen = len(data) + 1
+        chk = (sum(data) + did + cid + seq + dlen) & 255
         chk ^= 255
 
         msg = [0xff, sop2, did, cid, seq, dlen] + data + [chk]
         print 'cmd:', ' '.join([chr(c).encode('hex') for c in msg])
-        # Note: withResponse is very important. Most commands won't work without it.
+        # Note: withResponse is very important
+        # Most commands won't work without it.
         self.roll.write(''.join([chr(c) for c in msg]), withResponse=True)
 
     def handleNotification(self, cHandle, data):
@@ -76,10 +80,10 @@ if __name__ == '__main__':
     bb = BB8(MAC_ADDR)
 
     # Dump all GATT stuff.
-    #bb.dumpCharacteristics()
+    # bb.dumpCharacteristics()
 
     # Request some sensor stream.
-    bb.cmd(0x02, 0x11, [0, 80, 0, 1, 0x80, 0, 0, 0,   0])
+    bb.cmd(0x02, 0x11, [0, 80, 0, 1, 0x80, 0, 0, 0, 0])
 
     for i in range(255):
         # Set RGB LED colour.
@@ -89,4 +93,3 @@ if __name__ == '__main__':
 
     # Must manually disconnect or you won't be able to reconnect.
     bb.disconnect()
-

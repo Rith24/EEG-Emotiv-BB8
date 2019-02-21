@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-# Following code by ali1234 at https://gist.github.com/ali1234/5e5758d9c591090291d6/
+# Following code by ali1234 at
+# https://gist.github.com/ali1234/5e5758d9c591090291d6/
 
 import pygame
 
@@ -38,11 +39,10 @@ while True:
         h -= 15
     elif keys[pygame.K_RIGHT]:
         h += 15
-    while h<0:
+    while h < 0:
         h += 360
-    while h>359:
+    while h > 359:
         h -= 360
     print h
 
-    bb.cmd(0x02, 0x30, [v, (h&0xff00)>>8, h&0xff, 1])
-
+    bb.cmd(0x02, 0x30, [v, (h & 0xff00) >> 8, h & 0xff, 1])

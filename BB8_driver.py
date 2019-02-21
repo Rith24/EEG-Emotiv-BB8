@@ -242,7 +242,7 @@ class Sphero(threading.Thread):
         threading.Thread.__init__(self)
         self.target_name = target_name
         self.bt = None
-        # Use "sudo hcitool lescan" to find BB8's MAC address input it at deviceAddress = 
+        # Use "sudo hcitool lescan" to find BB8's MAC address input it at deviceAddress =
         self.deviceAddress = MAC_ADDR
         self.shutdown = False
         self.is_connected = False
@@ -869,11 +869,11 @@ class Sphero(threading.Thread):
         '''
         The data payload of the async message is 1h bytes long and
         formatted as follows::
-    
+
           --------
           |State |
           --------
-    
+
         The power state byte:
           * 01h = Battery Charging,
           * 02h = Battery OK,
@@ -887,11 +887,11 @@ class Sphero(threading.Thread):
         '''
         The data payload of the async message is 10h bytes long and
         formatted as follows::
-    
+
           -----------------------------------------------------------------
           |X | Y | Z | AXIS | xMagnitude | yMagnitude | Speed | Timestamp |
           -----------------------------------------------------------------
-    
+
         * X, Y, Z - Impact components normalized as a signed 16-bit\
         value. Use these to determine the direction of collision event. If\
         you don't require this level of fidelity, the two Magnitude fields\
@@ -909,7 +909,7 @@ class Sphero(threading.Thread):
         this value.
         '''
         output = {}
-    
+
         output['X'], output['Y'], output['Z'], output['Axis'], output['xMagnitude'], output['yMagnitude'], output[
             'Speed'], output['Timestamp'] = struct.unpack_from('>hhhbhhbI', ''.join(data[5:]))
         return output
@@ -930,4 +930,3 @@ class Sphero(threading.Thread):
         #self.bt.disconnect()
         self.bt.peripheral.disconnect()
         return self.is_connected
-
