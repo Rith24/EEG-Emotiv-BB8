@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Update
+sudo apt update
+sudo apt upgrade
+
 # Install packages
 sudo apt install python python-pip bpython ipython libglib2.0-dev build-essential cmake qt5-default libboost-all-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev autotools-dev autoconf automake libtool
 # Install Python Packages
