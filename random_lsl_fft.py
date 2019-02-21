@@ -7,6 +7,12 @@ from random import randint as rand
 # from numpy.fft import fft
 from pylsl import StreamInfo, StreamOutlet
 
+import numpy as np
+#import matplotlib.pyplot as plt
+#import seaborn as sns
+from scipy import signal
+from scipy.integrate import simps
+
 # first create a new stream info (here we set the name to BioSemi,
 # the content-type to EEG, 8 channels, 100 Hz, and float-valued data) The
 # last value would be the serial number of the device or some other more or
@@ -24,24 +30,43 @@ info = StreamInfo(stream_name, stream_type, num_channel,
 outlet = StreamOutlet(info)
 
 
-def calc_bands_power(x, dt, bands):
-    """TODO: add working function for FFT/frequency components here
-    this function is unused / incomplete
-    """
+# TODO: add working function for FFT/frequency components here
 
-    from scipy.signal import welch
-    f, psd = welch(x, fs=1. / dt)
-    power = {band: np.mean(psd[np.where((f >= lf) & (f <= hf))])
-             for band, (lf, hf) in bands.items()}
-    return power
+# def calc_bands_power(x, dt, bands):
+#     from scipy.signal import welch
+#     f, psd = welch(x, fs=1. / dt)
+#     power = {band: np.mean(psd[np.where((f >= lf) & (f <= hf))])
+#              for band, (lf, hf) in bands.items()}
+#     return power
 
 
-def do_fft(sample):
-    """TODO: a function to run fft on time windows of emotive packets data
-    this function is unused / incomplete
-    """
-    fftn(sample, s=None, axes=None, norm=None)
-    pass
+def bandpower(data, sf, band, window_sec=None, relative=False):
+    
+   from scipy.signal import welch
+   from scipy.integrate import simps
+   band = np.asarray(band)
+   low, high = band
+
+   # Define window length
+   if window_sec is not None:
+      nperseg = window_sec * sf
+   else:
+      nperseg = (2 / low) * sf
+
+# Compute the modified periodogram (Welch)
+   freqs, psd = welch(data, sf, nperseg=nperseg)
+
+  # Frequency resolution
+   freq_res = freqs[1] - freqs[0]
+   # Find closest indices of band in frequency vector
+   idx_band = np.logical_and(freqs >= low, freqs <= high)
+
+   # Integral approximation of the spectrum using Simpson's rule.
+   bp = simps(psd[idx_band], dx=freq_res)
+
+   if relative:
+      bp /= simps(psd, dx=freq_res)
+   return bp
 
 
 def r():
@@ -51,7 +76,7 @@ def r():
     b = 150  # upper bound for random simulated EEG data
     return rand(a, b) * n
 
-
+#bands = [[0.5,4],[4,12],[12,30],[30,45]]
 # Send randomly generated data into the LSL
 print("now sending data...")
 # points = []
@@ -59,6 +84,7 @@ while True:
     # make a new random 14-channel sample; this is converted into a
     # pylsl.vectorf (the data type that is expected by push_sample)
     mysample = [r() for i in range(14)]
+    powerValue = bandpower(mysample, sample_freq, [0.5,4])
 
     # if len(points) == 64:
     #     print fft(points, n=None, axis=-1, norm=None)
