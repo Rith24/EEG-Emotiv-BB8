@@ -12,12 +12,14 @@ emokit
 cmake
 LSL shared library
 pylsl
+numpy
+scipy
 
 For Ubuntu/Debian Linux:
 ```
 sudo apt install bulid-essential python python-pip libglib2.0-dev cmake
 sudo pip install bluepy
-pip install pygame pycrypto future pytest
+pip install pygame pycrypto future pytest numpy scipy
 ```
 
 # emotiv-bb8
