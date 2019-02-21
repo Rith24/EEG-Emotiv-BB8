@@ -14,12 +14,13 @@ LSL shared library
 pylsl
 numpy
 scipy
+mne
 
 For Ubuntu/Debian Linux:
 ```
-sudo apt install bulid-essential python python-pip libglib2.0-dev cmake
-sudo pip install bluepy
-pip install pygame pycrypto future pytest numpy scipy
+sudo apt install python python-pip bpython ipython libglib2.0-dev build-essential cmake qt5-default libboost-all-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev autotools-dev autoconf automake libtool
+sudo pip install -U bluepy
+pip install -U pygame pycrypto pytest future numpy scipy mne
 ```
 
 # emotiv-bb8
