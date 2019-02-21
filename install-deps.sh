@@ -8,10 +8,10 @@ sudo apt update
 sudo apt upgrade
 
 # Install packages
-sudo apt install python python-pip bpython ipython libglib2.0-dev build-essential cmake qt5-default libboost-all-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev autotools-dev autoconf automake libtool
+sudo apt install python python-pip bpython ipython libglib2.0-dev build-essential cmake qt5-default libboost-all-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev autotools-dev autoconf automake libtool libsdl1.2-dev
 # Install Python Packages
-sudo pip install -U bluepy
-pip install -U pygame pycrypto pytest future numpy scipy mne
+sudo python -m pip install -U bluepy
+python -m pip install -U pygame pycrypto pytest future numpy scipy mne
 
 mkdir -p ~/Documents/GitHub
 
