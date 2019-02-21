@@ -12,6 +12,7 @@ import numpy as np
 # import seaborn as sns
 from scipy.integrate import simps
 from scipy.signal import welch
+from mne.time_frequency import psd_array_multitaper
 
 # first create a new stream info (here we set the name to BioSemi,
 # the content-type to EEG, 8 channels, 100 Hz, and float-valued data) The
@@ -40,25 +41,57 @@ outlet = StreamOutlet(info)
 #     return power
 
 
-def bandpower(data, sf, band, window_sec=None, relative=False):
+def bandpower(data, sf, band, method='welch', window_sec=None, relative=False):
+    """Compute the average power of the signal x in a specific frequency band.
+
+    Requires MNE-Python >= 0.14.
+
+    Parameters
+    ----------
+    data : 1d-array
+      Input signal in the time-domain.
+    sf : float
+      Sampling frequency of the data.
+    band : list
+      Lower and upper frequencies of the band of interest.
+    method : string
+      Periodogram method: 'welch' or 'multitaper'
+    window_sec : float
+      Length of each window in seconds. Useful only if method == 'welch'.
+      If None, window_sec = (1 / min(band)) * 2.
+    relative : boolean
+      If True, return the relative power (= divided by the total power of the signal).
+      If False (default), return the absolute power.
+
+    Return
+    ------
+    bp : float
+      Absolute or relative band power.
+    """
+
     band = np.asarray(band)
     low, high = band
 
-    # Define window length
-    if window_sec is not None:
-        nperseg = window_sec * sf
-    else:
-        nperseg = (2 / low) * sf
-
     # Compute the modified periodogram (Welch)
-    freqs, psd = welch(data, sf, nperseg=nperseg)
+    if method == 'welch':
+        if window_sec is not None:
+            nperseg = window_sec * sf
+        else:
+            nperseg = (2 / low) * sf
+
+        freqs, psd = welch(data, sf, nperseg=nperseg)
+
+    elif method == 'multitaper':
+        psd, freqs = psd_array_multitaper(data, sf, adaptive=True,
+                                          normalization='full', verbose=0)
 
     # Frequency resolution
     freq_res = freqs[1] - freqs[0]
-    # Find closest indices of band in frequency vector
+
+    # Find index of band in frequency vector
     idx_band = np.logical_and(freqs >= low, freqs <= high)
 
-    # Integral approximation of the spectrum using Simpson's rule.
+    # Integral approximation of the spectrum using parabola (Simpson's rule)
     bp = simps(psd[idx_band], dx=freq_res)
 
     if relative:
@@ -77,20 +110,30 @@ def r():
 # bands = [[0.5,4],[4,12],[12,30],[30,45]]
 # Send randomly generated data into the LSL
 print("now sending data...")
-# points = []
+points = []
 while True:
     # make a new random 14-channel sample; this is converted into a
     # pylsl.vectorf (the data type that is expected by push_sample)
-    mysample = [r() for i in range(14)]
-    powerValue = bandpower(mysample, sample_freq, [0.5, 4])
+    # mysample = [r() for i in range(14)]
+    # powerValue = bandpower(mysample, sample_freq, [0.5, 4])
 
-    # if len(points) == 64:
-    #     print fft(points, n=None, axis=-1, norm=None)
-    #     # print fftn(points, s=None, axes=None, norm=None)
-    #     points = []
-    # else:
-    #     points.append(mysample)
+    # simulated 30 seconds of F3 channel data
+    data_F3 = np.loadtxt('data.txt')
+    data_F3_simulated = np.asarray([r() for i in range(14)])
+
+    delta_band = [1, 4]
+
+    powerValue = bandpower(data_F3_simulated, sample_freq,
+                           delta_band, 'multitaper')
+    if len(points) == 64:
+        print 'Absolute delta power (simulated): %.3f' % powerValue
+        points = []
+    else:
+        points.append(powerValue)
 
     # now send it and wait for a bit
-    outlet.push_sample(mysample)
-    time.sleep(1.0 / 140.0)
+    outlet.push_sample(points)
+    time.sleep(1.0 / sample_freq)
+
+# TODO: LSL wants a 14-channel sample to push every 1/140 s.
+# TODO: BUT, bandpower() wants a long set of data for one single channel
