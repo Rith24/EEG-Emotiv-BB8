@@ -129,7 +129,7 @@ def r():
 
 
 # bands = [[0.5,4],[4,12],[12,30],[30,45]]
-data_file = open('trimmed_emotiv_values_2019-02-05 18-32-30.371051.csv', 'r')
+data_file = open('trimmed_emotiv_values_2019-02-05_18-32-30.371051.csv', 'r')
 data_arr = np.asarray([data_file.next().strip().split(',')])
 
 # Send randomly generated data into the LSL
