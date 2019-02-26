@@ -2,17 +2,10 @@
 LSL."""
 
 import time
-from random import randint as rand
-# from numpy.fft import fftn
-# from numpy.fft import fft
-from pylsl import StreamInfo, StreamOutlet
-
 import numpy as np
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-# from scipy.integrate import simps
+from pylsl import StreamInfo, StreamOutlet
 from scipy.signal import welch
-# from mne.time_frequency import psd_array_multitaper
+# from random import randint as rand
 
 # first create a new stream info (here we set the name to BioSemi,
 # the content-type to EEG, 8 channels, 100 Hz, and float-valued data) The
@@ -22,12 +15,10 @@ from scipy.signal import welch
 stream_name = 'BioSemi'
 stream_type = 'EEG'
 num_channel = 14
-sample_freq = 140
+sample_freq = 128
 headset_uid = 'myuid34234'
 info = StreamInfo(stream_name, stream_type, num_channel,
                   sample_freq, 'float32', headset_uid)
-
-# next make an outlet
 outlet = StreamOutlet(info)
 
 eeg_bands = {'Delta': (0, 4),
@@ -52,98 +43,35 @@ chans = dict(F3=0,
              F4=13)
 
 
-# TODO: add working function for FFT/frequency components here
-
-
 def calc_bands_power(x, dt, bands):
+    """
+    From https://dsp.stackexchange.com/a/48210
+    :param x: data array for one channel
+    :param dt: sample frequency
+    :param bands: dict of eeg_bands
+    :return: dict of power values one for each band
+    """
     f, psd = welch(x, fs=1. / dt)
     power = {band: np.mean(psd[np.where((f >= lf) & (f <= hf))])
              for band, (lf, hf) in bands.items()}
     return power
 
 
-# def bandpower(data, sf, band, method='welch', window_sec=None, relative=False):
-#     """Compute the average power of the signal x in a specific frequency band.
-#
-#     Requires MNE-Python >= 0.14.
-#
-#     Parameters
-#     ----------
-#     data : 1d-array
-#       Input signal in the time-domain.
-#     sf : float
-#       Sampling frequency of the data.
-#     band : list
-#       Lower and upper frequencies of the band of interest.
-#     method : string
-#       Periodogram method: 'welch' or 'multitaper'
-#     window_sec : float
-#       Length of each window in seconds. Useful only if method == 'welch'.
-#       If None, window_sec = (1 / min(band)) * 2.
-#     relative : boolean
-#       If True, return the relative power (= divided by the total power of the signal).
-#       If False (default), return the absolute power.
-#
-#     Return
-#     ------
-#     bp : float
-#       Absolute or relative band power.
-#     """
-#
-#     band = np.asarray(band)
-#     low, high = band
-#
-#     # Compute the modified periodogram (Welch)
-#     if method == 'welch':
-#         if window_sec is not None:
-#             nperseg = window_sec * sf
-#         else:
-#             nperseg = (2 / low) * sf
-#
-#         freqs, psd = welch(data, sf, nperseg=nperseg)
-#
-#     elif method == 'multitaper':
-#         psd, freqs = psd_array_multitaper(data, sf, adaptive=True,
-#                                           normalization='full', verbose=0)
-#
-#     # Frequency resolution
-#     freq_res = freqs[1] - freqs[0]
-#
-#     # Find index of band in frequency vector
-#     idx_band = np.logical_and(freqs >= low, freqs <= high)
-#
-#     # Integral approximation of the spectrum using parabola (Simpson's rule)
-#     bp = simps(psd[idx_band], dx=freq_res)
-#
-#     if relative:
-#         bp /= simps(psd, dx=freq_res)
-#     return bp
+# def r():
+#     """a function that returns a random float between -150 and 150"""
+#     n = 1.0471975511965976  # pi/3
+#     a = -150  # lower bound for random simulated EEG data
+#     b = 150  # upper bound for random simulated EEG data
+#     return rand(a, b) * n
 
 
-def r():
-    """a function that returns a random float between -150 and 150"""
-    n = 1.0471975511965976  # pi/3
-    a = -150  # lower bound for random simulated EEG data
-    b = 150  # upper bound for random simulated EEG data
-    return rand(a, b) * n
-
-
-# bands = [[0.5,4],[4,12],[12,30],[30,45]]
 data_file = open('trimmed_emotiv_values_2019-02-05_18-32-30.371051.csv', 'r')
 data_arr = np.asarray([data_file.next().strip().split(',')])
 
-# Send randomly generated data into the LSL
-print("now sending data...")
-# while True:
-for line in data_file:
-    # make a new random 14-channel sample; this is converted into a
-    # pylsl.vectorf (the data type that is expected by push_sample)
-    # mysample = [r() for i in range(14)]
-    # powerValue = bandpower(mysample, sample_freq, [0.5, 4])
+# print("now sending data...")
 
-    # simulated 30 seconds of F3 channel data
-    # data_F3 = np.loadtxt('data.txt')
-    # packet_data = np.asarray([r() for i in range(14)])
+for line in data_file:
+
     packet_data = np.asarray(line.strip().split(','))
 
     if len(data_arr) == 64:
@@ -208,4 +136,5 @@ for line in data_file:
         time.sleep(1.0 / sample_freq)
     else:
         data_arr = np.append(data_arr, [packet_data], axis=0)
+
 data_file.close()
