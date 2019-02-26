@@ -5,6 +5,7 @@ import time
 import numpy as np
 from pylsl import StreamInfo, StreamOutlet
 from scipy.signal import welch
+import mne
 # from random import randint as rand
 
 # first create a new stream info (here we set the name to BioSemi,
@@ -42,6 +43,9 @@ chans = dict(F3=0,
              FC6=12,
              F4=13)
 
+bp_low = 1.
+bp_high = 50.
+
 
 def calc_bands_power(x, dt, bands):
     """
@@ -57,24 +61,16 @@ def calc_bands_power(x, dt, bands):
     return power
 
 
-# def r():
-#     """a function that returns a random float between -150 and 150"""
-#     n = 1.0471975511965976  # pi/3
-#     a = -150  # lower bound for random simulated EEG data
-#     b = 150  # upper bound for random simulated EEG data
-#     return rand(a, b) * n
-
-
 data_file = open('trimmed_emotiv_values_2019-02-05_18-32-30.371051.csv', 'r')
-data_arr = np.asarray([data_file.next().strip().split(',')])
+data_arr = np.asarray([data_file.next().strip().split(',')], dtype=np.float64) - 4100  # normalize
 
 # print("now sending data...")
 
 for line in data_file:
 
-    packet_data = np.asarray(line.strip().split(','))
+    packet_data = np.asarray(line.strip().split(','), dtype=np.float64) - 4100  # normalize
 
-    if len(data_arr) == 64:
+    if len(data_arr) == 256:  # 64:
         f3_data = data_arr[:, chans['F3']]
         fc5_data = data_arr[:, chans['FC5']]
         af3_data = data_arr[:, chans['AF3']]
@@ -82,7 +78,9 @@ for line in data_file:
         t7_data = data_arr[:, chans['T7']]
         p7_data = data_arr[:, chans['P7']]
         o1_data = data_arr[:, chans['O1']]
+        # o1_data_filt = mne.filter.filter_data(o1_data, sample_freq, bp_low, bp_high)
         o2_data = data_arr[:, chans['O2']]
+        # o2_data_filt = mne.filter.filter_data(o2_data, sample_freq, bp_low, bp_high)
         p8_data = data_arr[:, chans['P8']]
         t8_data = data_arr[:, chans['T8']]
         f8_data = data_arr[:, chans['F8']]
@@ -127,14 +125,16 @@ for line in data_file:
 
         data_arr = np.asarray([packet_data])
 
+        print 'New Packet Buffer [64]:'
         print 'O1 Alpha Power:', o1_power['Alpha']
         print 'O2 Alpha Power:', o2_power['Alpha']
-        print
 
         # now send it and wait for a bit
         # outlet.push_sample(power_values_delta)
         time.sleep(1.0 / sample_freq)
     else:
         data_arr = np.append(data_arr, [packet_data], axis=0)
+
+print
 
 data_file.close()
