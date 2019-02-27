@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """Example program to demonstrate how to send a multi-channel time series to
 LSL."""
 
@@ -11,7 +12,7 @@ from bb8 import BB8
 stream_name = 'BioSemi'
 stream_type = 'EEG'
 num_channel = 14
-sample_freq = 128
+sample_freq = 140
 headset_uid = 'myuid34234'
 # info = StreamInfo(stream_name, stream_type, num_channel,
 #                   sample_freq, 'float32', headset_uid)
@@ -49,8 +50,9 @@ MAC_ADDR = 'F2:D8:37:4B:CE:F1'
 bb = BB8(MAC_ADDR)
 bb.cmd(0x02, 0x21, [0xff])
 heading = 0
+angle = 15
 red = [0xff, 0x00, 0x00, 0]
-blue = [0x00, 0xff, 0xff, 0]
+green = [0x00, 0xff, 0x00, 0]
 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -78,11 +80,12 @@ def calc(x, fmin, fmax, fs=sample_freq):
 def roll(clockwise):
     global bb
     global heading
+    global angle
     if clockwise:
-        heading += 15
+        heading += angle
         direction = [100, (heading & 0xff00) >> 8, heading & 0xff, 1]
     else:
-        heading -= 15
+        heading -= angle
         direction = [100, (heading & 0xff00) >> 8, heading & 0xff, 1]
     while heading < 0:
         heading += 360
@@ -94,6 +97,7 @@ def roll(clockwise):
 def color(c):
     global bb
     bb.cmd(0x02, 0x20, c)
+
 
 data_file = open('trimmed_emotiv_values_2019-02-05_18-32-30.371051.csv', 'r')
 data_arr = []
@@ -121,14 +125,18 @@ for line in data_file:
         p_o1 = calc(o1_data, fmin, fmax)
         p_o2 = calc(o2_data, fmin, fmax)
 
-        # print 'O1 Alpha Power:', p_o1, '|', 'O2 Alpha Power:', p_o2
+        print 'O1 Alpha Power:', p_o1, '|', 'Threshold:', p_o2
 
         if p_o1 > o_alpha_thresh:
-            print 'b.color(red)'
-            print 'b.roll(False)'
+            print 'color(red)'
+            color(red)
+            print 'roll(False)'
+            roll(False)
         else:
-            print 'b.color(blue)'
-            print 'b.roll(True)'
+            print 'color(green)'
+            color(green)
+            print 'roll(True)'
+            roll(True)
 
         # now send it and wait for a bit
         # outlet.push_sample(power_values_delta)
