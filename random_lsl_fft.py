@@ -9,11 +9,11 @@ from scipy.signal import butter, lfilter
 # from pylsl import StreamInfo, StreamOutlet
 from bb8 import BB8
 
-stream_name = 'BioSemi'
-stream_type = 'EEG'
+# stream_name = 'BioSemi'
+# stream_type = 'EEG'
+# headset_uid = 'myuid34234'
 num_channel = 14
 sample_freq = 140
-headset_uid = 'myuid34234'
 # info = StreamInfo(stream_name, stream_type, num_channel,
 #                   sample_freq, 'float32', headset_uid)
 # outlet = StreamOutlet(info)
