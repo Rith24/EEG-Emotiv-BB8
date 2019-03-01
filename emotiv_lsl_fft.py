@@ -54,7 +54,6 @@ heading = 0
 angle = 15
 red = [0xff, 0x00, 0x00, 0]
 green = [0x00, 0xff, 0x00, 0]
-terminate = False
 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -102,82 +101,72 @@ def color(c):
     bb.cmd(0x02, 0x20, c)
 
 
-def signal_handling(signum, frame):
-    global terminate
-    terminate = True
-
-
 def main():
 
     training.train(eyesopen=True)
     training.train(eyesopen=False)
+    average_abt = training.get_average_abt()
 
     data_arr = []
-    i = 0
     with Emotiv(display_output=False, verbose=True) as headset:
         while True:
-            packet = headset.dequeue()
-            if packet is not None:
-                # Get the 14 values from emotiv packet
-                sample = [headset.sensors[c]['value'] for c in ch_names]
+            try:
+                packet = headset.dequeue()
+                if packet is not None:
+                    # Get the 14 values from emotiv packet
+                    sample = [headset.sensors[c]['value'] for c in ch_names]
 
-                data_arr.append(sample)
+                    data_arr.append(sample)
 
-                if len(data_arr) != 0 and len(data_arr) % num_packets == 0:
+                    if len(data_arr) != 0 and len(data_arr) == num_packets:
 
-                    # Get Data for O1 and O2 channel
-                    o1_data = [col[chans['O1']] for col in data_arr]
-                    # o2_data = [col[chans['O2']] - 4100 for col in data_arr]
-                    for i in range(len(o1_data)):
-                        print type(o1_data[i]), o1_data[i]
-                        o1_data[i] = float(o1_data[i]) - 4100.0
+                        # Get Data for O1 and O2 channel
+                        o1_data = [col[chans['O1']] for col in data_arr]
+                        # o2_data = [col[chans['O2']] - 4100 for col in data_arr]
 
-                    # Filtering
-                    # o1_data_filt = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
-                    # o2_data_filt = butter_bandpass_filter(o2_data, bp_low, bp_high, sample_freq, order=5)
+                        # Filtering
+                        # o1_data_filt = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
+                        # o2_data_filt = butter_bandpass_filter(o2_data, bp_low, bp_high, sample_freq, order=5)
 
-                    # Thresholding
-                    # o1_amplitude = max(o1_data[i-num_packets+1:i]) - min(o1_data[i-num_packets+1:i])
-                    # o2_amplitude = max(o2_data[i-num_packets+1:i]) - min(o2_data[i-num_packets+1:i])
+                        # Thresholding
+                        # o1_amplitude = max(o1_data[i-num_packets+1:i]) - min(o1_data[i-num_packets+1:i])
+                        # o2_amplitude = max(o2_data[i-num_packets+1:i]) - min(o2_data[i-num_packets+1:i])
 
-                    # Calculate Alpha Band Power
-                    fmin, fmax = eeg_bands['Alpha']
-                    a_o1 = calc(o1_data, fmin, fmax)
-                    # a_o2 = calc(o2_data, fmin, fmax)
+                        # Calculate Alpha Band Power
+                        fmin, fmax = eeg_bands['Alpha']
+                        a_o1 = calc(o1_data, fmin, fmax)
+                        # a_o2 = calc(o2_data, fmin, fmax)
 
-                    # Calculate Theta Band Power
-                    fmin, fmax = eeg_bands['Theta']
-                    t_o1 = calc(o1_data, fmin, fmax)
-                    # t_o2 = calc(o2_data, fmin, fmax)
+                        # Calculate Theta Band Power
+                        fmin, fmax = eeg_bands['Theta']
+                        t_o1 = calc(o1_data, fmin, fmax)
+                        # t_o2 = calc(o2_data, fmin, fmax)
 
-                    # Calculate Alpha / Theta
-                    abt_o1 = a_o1 / t_o1
-                    # abt_o2 = a_o2 / t_o2
+                        # Calculate Alpha / Theta
+                        abt_o1 = a_o1 / t_o1
+                        # abt_o2 = a_o2 / t_o2
 
-                    average_abt = training.get_average_abt()
+                        print 'O1 Alpha/Theta:', abt_o1, '|', 'Average Alpha/Theta:', average_abt
 
-                    print 'O1 Alpha/Theta:', abt_o1, '|', 'Average Alpha/Theta:', average_abt
+                        if abt_o1 > average_abt:
+                            print 'color(red)'
+                            color(red)
+                            print 'roll(False)'
+                            roll(False)
+                        else:
+                            print 'color(green)'
+                            color(green)
+                            print 'roll(True)'
+                            roll(True)
 
-                    if abt_o1 > average_abt:
-                        print 'color(red)'
-                        color(red)
-                        print 'roll(False)'
-                        roll(False)
-                    else:
-                        print 'color(green)'
-                        color(green)
-                        print 'roll(True)'
-                        roll(True)
-
-                    # now send it and wait for a bit
-                    # outlet.push_sample(power_values_delta)
-                    time.sleep(1.0 / sample_freq)
-                i += 1
-
-                # Graceful shutdown on ^C
-                if terminate:
-                    print "\nDisconnecting..."
+                        data_arr = []
+                        # now send it and wait for a bit
+                        # outlet.push_sample(power_values_delta)
+                        time.sleep(1.0 / sample_freq)
+                else:
                     break
+            except KeyboardInterrupt:
+                break
 
         bb.disconnect()
         print "Done."
@@ -185,5 +174,4 @@ def main():
 
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGINT, signal_handling)
     main()

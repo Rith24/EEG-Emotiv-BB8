@@ -74,12 +74,12 @@ for line in data_file:
         o1_data = [col[chans['O1']] for col in data_arr]
         o2_data = [col[chans['O2']] for col in data_arr]
 
-      #  o1_data = o1_data 4100
-      #  o2_data = 4100
+        #  o1_data = o1_data 4100
+        #  o2_data = 4100
 
-        for i in range(len(o1_data)):
-            o1_data[i] = o1_data[i] - 4100
-            if len(o1_data) == len(o2_data):
+        if len(o1_data) == len(o2_data):
+            for i in range(len(o1_data)):
+                o1_data[i] = o1_data[i] - 4100
                 o2_data[i] = o2_data[i] - 4100
 
         # Filtering

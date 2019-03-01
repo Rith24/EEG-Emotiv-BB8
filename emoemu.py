@@ -12,7 +12,7 @@ class EmoemuPacket(object):
         self.chans = ["F3", "FC5", "AF3", "F7", "T7", "P7", "O1", "O2", "P8", "T8", "F8", "AF4", "FC6", "F4"]
         self.sensors = sensors_mapping.copy()
         for i in range(len(self.chans)):
-            self.sensors[self.chans[i]]['value'] = self.data[i]
+            self.sensors[self.chans[i]]['value'] = float(self.data[i])
 
 
 class Emotiv(object):
@@ -34,7 +34,7 @@ class Emotiv(object):
     def dequeue(self):
         try:
             if not self.packets.empty():
-                return self.packets.get()
+                return self.packets.get_nowait()
         except KeyboardInterrupt:
             self.stop()
         return None
@@ -63,7 +63,6 @@ class Emotiv(object):
         testcount = 0
         while True:
             raw_data = self.infile.readline().strip().split(',')
-            # raw_data = map(float, self.infile.readline().strip().split(','))
             testcount += 1
             if raw_data == ['']:
                 break

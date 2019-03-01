@@ -17,3 +17,6 @@ class BB8:
 
         msg = [0xff, sop2, did, cid, seq, dlen] + data + [chk]
         print 'cmd:', ' '.join([chr(c).encode('hex') for c in msg])
+
+    def disconnect(self):
+        print('disconnected')
