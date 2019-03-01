@@ -5,7 +5,8 @@ from scipy.signal import butter, lfilter, periodogram
 # from pylsl import StreamInfo, StreamOutlet
 # from emokit.emotiv import Emotiv
 from emoemu import Emotiv
-from bb8 import BB8
+# from bb8 import BB8
+from bb8emu import BB8
 import training
 
 # stream_name = 'BioSemi'
@@ -22,6 +23,8 @@ eeg_bands = {'Delta': (0, 4),
              'Alpha': (8, 12),
              'Beta': (12, 30),
              'Gamma': (30, 45)}
+
+ch_names = ['F3', 'FC5', 'AF3', 'F7', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'F8', 'AF4', 'FC6', 'F4']
 
 chans = dict(F3=0,
              FC5=1,
@@ -116,7 +119,7 @@ def main():
             packet = headset.dequeue()
             if packet is not None:
                 # Get the 14 values from emotiv packet
-                sample = [headset.sensors[c]['value'] for c in chans]
+                sample = [headset.sensors[c]['value'] for c in ch_names]
 
                 data_arr.append(sample)
 
@@ -124,7 +127,10 @@ def main():
 
                     # Get Data for O1 and O2 channel
                     o1_data = [col[chans['O1']] for col in data_arr]
-                    # o2_data = [col[chans['O2']] for col in data_arr]
+                    # o2_data = [col[chans['O2']] - 4100 for col in data_arr]
+                    for i in range(len(o1_data)):
+                        print type(o1_data[i]), o1_data[i]
+                        o1_data[i] = float(o1_data[i]) - 4100.0
 
                     # Filtering
                     # o1_data_filt = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)

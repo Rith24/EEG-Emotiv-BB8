@@ -19,7 +19,7 @@ class Emotiv(object):
     """
     adapted from emokit.emotiv.Emotiv
     """
-    def __init__(self, display_output=False, verbose=True, write=False, write_decrypted=False, input_source="emotiv"):
+    def __init__(self, display_output=False, verbose=True, write=False, write_decrypted=False, input_source="emu_eyesopen.csv"):
         print "Initializing Emoemu..."
         self.display_output = display_output
         self.verbose = verbose
@@ -63,6 +63,7 @@ class Emotiv(object):
         testcount = 0
         while True:
             raw_data = self.infile.readline().strip().split(',')
+            # raw_data = map(float, self.infile.readline().strip().split(','))
             testcount += 1
             if raw_data == ['']:
                 break
