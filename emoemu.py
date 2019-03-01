@@ -76,4 +76,5 @@ class Emotiv(object):
 
 
 if __name__ == "__main__":
-    a = Emotiv()
+    a = Emotiv(input_source='emu_eyesopen.csv')
+    b = Emotiv(input_source='emu_eyesclosed.csv')
