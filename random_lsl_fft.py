@@ -2,12 +2,11 @@
 """Example program to demonstrate how to send a multi-channel time series to
 LSL."""
 
-import time
+import sys, signal, time
 import scipy
-from scipy import signal
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, periodogram
 # from pylsl import StreamInfo, StreamOutlet
-from bb8 import BB8
+# from bb8 import BB8
 
 # stream_name = 'BioSemi'
 # stream_type = 'EEG'
@@ -47,12 +46,14 @@ thresh_high = 100
 o_alpha_thresh = 10.
 
 MAC_ADDR = 'F2:D8:37:4B:CE:F1'
-bb = BB8(MAC_ADDR)
-bb.cmd(0x02, 0x21, [0xff])
+# bb = BB8(MAC_ADDR)
+# bb.cmd(0x02, 0x21, [0xff])
+
 heading = 0
 angle = 15
 red = [0xff, 0x00, 0x00, 0]
 green = [0x00, 0xff, 0x00, 0]
+terminate = False
 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -99,49 +100,75 @@ def color(c):
     bb.cmd(0x02, 0x20, c)
 
 
-data_file = open('trimmed_emotiv_values_2019-02-05_18-32-30.371051.csv', 'r')
-data_arr = []
-i = 0
-for line in data_file:
+def signal_handling(signum, frame):
+    global terminate
+    terminate = True
 
-    data_arr.append(map(float, line.strip().split(',')))
 
-    if len(data_arr) !=0 and len(data_arr) % num_packets == 0:
+def main():
+    data_file = open('trimmed_emotiv_values_2019-02-05_18-32-30.371051.csv', 'r')
+    data_arr = []
+    i = 0
+    for line in data_file:
 
-        # Get Data for O1 and O2 channel
-        o1_data = [col[chans['O1']] for col in data_arr]
-        o2_data = [col[chans['O2']] for col in data_arr]
+        data_arr.append(map(float, line.strip().split(',')))
 
-        # Filtering
-        # o1_data_filt = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
-        # o2_data_filt = butter_bandpass_filter(o2_data, bp_low, bp_high, sample_freq, order=5)
+        if len(data_arr) !=0 and len(data_arr) % num_packets == 0:
 
-        # Thresholding
-        # o1_amplitude = max(o1_data[i-num_packets+1:i]) - min(o1_data[i-num_packets+1:i])
-        # o2_amplitude = max(o2_data[i-num_packets+1:i]) - min(o2_data[i-num_packets+1:i])
+            # Get Data for O1 and O2 channel
+            o1_data = [col[chans['O1']] for col in data_arr]
+            o2_data = [col[chans['O2']] for col in data_arr]
 
-        # Calculate Alpha Band Power for O1 and O2
-        fmin, fmax = eeg_bands['Alpha']
-        p_o1 = calc(o1_data, fmin, fmax)
-        p_o2 = calc(o2_data, fmin, fmax)
+            # Filtering
+            # o1_data_filt = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
+            # o2_data_filt = butter_bandpass_filter(o2_data, bp_low, bp_high, sample_freq, order=5)
 
-        print 'O1 Alpha Power:', p_o1, '|', 'Threshold:', p_o2
+            # Thresholding
+            # o1_amplitude = max(o1_data[i-num_packets+1:i]) - min(o1_data[i-num_packets+1:i])
+            # o2_amplitude = max(o2_data[i-num_packets+1:i]) - min(o2_data[i-num_packets+1:i])
 
-        if p_o1 > o_alpha_thresh:
-            print 'color(red)'
-            color(red)
-            print 'roll(False)'
-            roll(False)
-        else:
-            print 'color(green)'
-            color(green)
-            print 'roll(True)'
-            roll(True)
+            # Calculate Alpha Band Power for O1 and O2
+            fmin, fmax = eeg_bands['Alpha']
+            ap_o1 = calc(o1_data, fmin, fmax)
+            ap_o2 = calc(o2_data, fmin, fmax)
 
-        # now send it and wait for a bit
-        # outlet.push_sample(power_values_delta)
-        time.sleep(1.0 / sample_freq)
+            # Calculate Theta Band power for O1 and O2
+            fmin, fmax = eeg_bands['Theta']
+            tp_o1 = calc(o1_data, fmin, fmax)
+            tp_o2 = calc(o2_data, fmin, fmax)
 
-    i += 1
+            abt_o1 = ap_o1 / tp_o1
+            abt_o2 = ap_o2 / tp_o2
+            abt_avg = (abt_o1 + abt_o2) / 2
 
-data_file.close()
+            print 'O1 Alpha / Theta:', ap_o1, '|', 'O2 Alpha Power:', ap_o2
+
+            if ap_o1 > o_alpha_thresh:
+                print 'color(red)'
+                color(red)
+                print 'roll(False)'
+                roll(False)
+            else:
+                print 'color(green)'
+                color(green)
+                print 'roll(True)'
+                roll(True)
+
+            # now send it and wait for a bit
+            # outlet.push_sample(power_values_delta)
+            time.sleep(1.0 / sample_freq)
+        i += 1
+
+        # Graceful shutdown on ^C
+        if terminate:
+            print "\nDisconnecting..."
+            break
+
+    bb.disconnect()
+    print "Done."
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handling)
+    main()
