@@ -16,9 +16,6 @@ avg_o1_alpha_eyesclosed = 0.
 avg_o1_theta_eyesclosed = 0.
 
 
-# TODO: average Alpha/Theta (ABT)
-
-
 def calc(x, fmin, fmax, fs):
     x = np.asarray(x, dtype=np.float64)
     f, Pxx = periodogram(x, fs=fs)
