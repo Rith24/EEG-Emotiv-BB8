@@ -20,7 +20,7 @@ sample_freq = 140
 
 eeg_bands = {'Delta': (0, 4),
              'Theta': (4, 8),
-             'Alpha': (8, 12),
+             'Alpha': (10, 12),
              'Beta': (12, 30),
              'Gamma': (30, 45)}
 
@@ -52,7 +52,7 @@ MAC_ADDR = 'F2:D8:37:4B:CE:F1'
 bb = BB8(MAC_ADDR)
 bb.cmd(0x02, 0x21, [0xff])
 heading = 0
-angle = 15
+angle = 60
 purple = [0xff, 0x00, 0xff, 0]
 green = [0x00, 0xff, 0x00, 0]
 yellow = [0xff, 0xff, 0x00, 0]
@@ -133,6 +133,8 @@ def main():
     # abt_trained = ((avg_o1_alpha_eyesopen/avg_o1_theta_eyesopen) + (avg_o1_alpha_eyesclosed/avg_o1_theta_eyesclosed))/2
     abt_trained = training.get_average_abt()
 
+    raw_input('Training Complete. Press Enter to continue...')
+    
     data_arr = []
     with Emotiv(display_output=False, verbose=True) as headset:
         while True:
@@ -144,7 +146,7 @@ def main():
 
                     data_arr.append(sample)
 
-                    if len(data_arr) != 0 and len(data_arr) == num_packets:
+                    if len(data_arr) == num_packets:
 
                         # Get Data for O1 and O2 channel
                         o1_data = [col[chans['O1']] for col in data_arr]

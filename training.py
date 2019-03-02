@@ -82,7 +82,7 @@ def train(eyesopen):
 
     packet_count = 0
     o1_data = []
-    with Emotiv(display_output=False, verbose=False) as headset:  #, input_source='emu_eyes' + mode + '.csv') as headset:
+    with Emotiv(display_output=False, verbose=True) as headset:  #, input_source='emu_eyes' + mode + '.csv') as headset:
         while packet_count < num_rec_packets:
             packet = headset.dequeue()
             if packet is not None:
@@ -97,7 +97,6 @@ def train(eyesopen):
                         # o1_data[i] = o1_data[i]/6
                     # Filtering
                     bp_low, bp_high, sample_freq = 1, 50, 140
-                    
                     o1_data = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
                     print('after subtraction, division, and filtering')
                     print(max(o1_data))
@@ -119,7 +118,6 @@ def train(eyesopen):
     else:
         avg_o1_alpha_eyesclosed = sum(o1_alphas_eyesclosed) / len(o1_alphas_eyesclosed)
         avg_o1_theta_eyesclosed = sum(o1_thetas_eyesclosed) / len(o1_thetas_eyesclosed)
-    print 'finished training'
 
 
 if __name__ == "__main__":
