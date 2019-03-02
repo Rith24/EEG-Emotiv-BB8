@@ -3,8 +3,8 @@ import numpy as np
 import scipy
 from scipy.signal import butter, lfilter, periodogram
 # from pylsl import StreamInfo, StreamOutlet
-# from emokit.emotiv import Emotiv
-from emoemu import Emotiv
+from emokit.emotiv import Emotiv
+# from emoemu import Emotiv
 from bb8 import BB8
 # from bb8emu import BB8
 import training
@@ -105,8 +105,32 @@ def color(c):
 
 def main():
 
+    """
+    avg_o1_alpha_eyesopen = 0.
+    avg_o1_theta_eyesopen = 0.
+    avg_o1_alpha_eyesclosed = 0.
+    avg_o1_theta_eyesclosed = 0.
+    
+    avg_o1_alpha_eyesopen =22.8203556961
+    avg_o1_alpha_eyesclosed =21.3627777428
+    avg_o1_theta_eyesopen =136.277341318
+    avg_o1_theta_eyesclosed =171.116188896
+    
+    avg_o1_alpha_eyesopen 26.6371945105
+    avg_o1_alpha_eyesclosed 51.7758978465
+    avg_o1_theta_eyesopen 222.906163651
+    avg_o1_theta_eyesclosed 285.299625622
+    
+    avg_o1_alpha_eyesopen = 3.56621148132
+    avg_o1_alpha_eyesclosed = 4.28481369505
+    avg_o1_theta_eyesopen = 1 #22.5621196167
+    avg_o1_theta_eyesclosed = 1 #24.6003135031
+    """
+
     training.train(eyesopen=True)
     training.train(eyesopen=False)
+    
+    # abt_trained = ((avg_o1_alpha_eyesopen/avg_o1_theta_eyesopen) + (avg_o1_alpha_eyesclosed/avg_o1_theta_eyesclosed))/2
     abt_trained = training.get_average_abt()
 
     data_arr = []
@@ -179,8 +203,8 @@ def main():
                         # now send it and wait for a bit
                         # outlet.push_sample(power_values_delta)
                         time.sleep(1.0 / sample_freq)
-                else:
-                    break
+                # else:
+                    # break
             except KeyboardInterrupt:
                 break
 

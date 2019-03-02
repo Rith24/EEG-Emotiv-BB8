@@ -40,20 +40,22 @@ def calc(x, fmin, fmax, fs):
     return y
 
 
-def get_abt_o():
+def get_average_alpha():
     global avg_o1_alpha_eyesopen
-    global avg_o1_theta_eyesopen
-    return (avg_o1_alpha_eyesopen / avg_o1_theta_eyesopen) 
-
-
-def get_abt_c():
     global avg_o1_alpha_eyesclosed
+    return (avg_o1_alpha_eyesopen + avg_o1_alpha_eyesclosed) / 2
+
+
+def get_average_theta():
+    global avg_o1_theta_eyesopen
     global avg_o1_theta_eyesclosed
-    return (avg_o1_alpha_eyesclosed / avg_o1_theta_eyesclosed)
+    return (avg_o1_theta_eyesopen + avg_o1_theta_eyesclosed) / 2
 
 
 def get_average_abt():
-    return (get_abt_o() + get_abt_c())/2
+    a = get_average_alpha()
+    t = get_average_theta()
+    return (a + t) / 2
 
 
 def train(eyesopen):
@@ -71,6 +73,7 @@ def train(eyesopen):
     fs = 140
     packet_chunk_size = 2 * fs
 
+
     print 'Begin recording eyes',
     if eyesopen:
         mode = 'open'
@@ -87,17 +90,16 @@ def train(eyesopen):
             packet = headset.dequeue()
             if packet is not None:
                 packet_count += 1
-                o1_value = headset.sensors['O1']['value']
+                o1_value = headset.sensors['O2']['value']
                 if packet_count != 0 and packet_count % packet_chunk_size == 0:
                     print('before subtraction and division')
                     print(max(o1_data))
                     print(min(o1_data))
                     for i in range(len(o1_data)):
-                        o1_data[i] = o1_data[i] - 4300
-                        # o1_data[i] = o1_data[i]/6
+                        o1_data[i] = o1_data[i] - 4400
+                        o1_data[i] = o1_data[i]/6
                     # Filtering
-                    bp_low, bp_high, sample_freq = 1, 50, 140
-                    
+                    bp_low, bp_high, sample_freq = 1, 50, 130
                     o1_data = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
                     print('after subtraction, division, and filtering')
                     print(max(o1_data))
@@ -111,6 +113,7 @@ def train(eyesopen):
                     o1_data = []
                 else:
                     o1_data.append(o1_value)
+
             sleep(1 / fs)
 
     if eyesopen:
@@ -119,7 +122,6 @@ def train(eyesopen):
     else:
         avg_o1_alpha_eyesclosed = sum(o1_alphas_eyesclosed) / len(o1_alphas_eyesclosed)
         avg_o1_theta_eyesclosed = sum(o1_thetas_eyesclosed) / len(o1_thetas_eyesclosed)
-    print 'finished training'
 
 
 if __name__ == "__main__":
