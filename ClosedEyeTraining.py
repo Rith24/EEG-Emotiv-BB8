@@ -8,7 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import training
-
+from avgATvalue_GUI import Ui_AverageAlphaThetaRatioValue
 class Ui_CloseEyeTraining(object):
     def setupUi(self, CloseEyeTraining):
         CloseEyeTraining.setObjectName("CloseEyeTraining")
@@ -56,8 +56,13 @@ class Ui_CloseEyeTraining(object):
         self.ClosedEyesLabel.setText(_translate("CloseEyeTraining", "BB8 Closed Eyes Training"))
         self.infoLabel.setText(_translate("CloseEyeTraining", "Click \"Start Training\" and close your eyes"))
     def closed_eyes_training(self):
-        training.train(eyesopen=False)
-        training.os.exit('WelcomeScreen.py')
+        #training.train(eyesopen=False)
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_AverageAlphaThetaRatioValue()
+        self.ui.setupUi(self.window)
+        #MainWindow.hide()
+        self.window.show()
+
 
 
 if __name__ == "__main__":

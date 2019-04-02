@@ -7,7 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import os
+from OpenEyeTraining import Ui_OpenEyeTraining
+#from main_GUI import main
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -58,7 +59,11 @@ class Ui_MainWindow(object):
         self.button1.setText(_translate("MainWindow", "Continue"))
 
     def displayScreen (self):
-        os.system('python2 OpenEyeTraining.py')
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_OpenEyeTraining()
+        self.ui.setupUi(self.window)
+        #MainWindow.hide()
+        self.window.show()
 
 
 

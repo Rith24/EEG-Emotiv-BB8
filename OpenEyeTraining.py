@@ -7,8 +7,10 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import training
-import os
+#import training
+
+from ClosedEyeTraining import Ui_CloseEyeTraining
+
 class Ui_OpenEyeTraining(object):
     def setupUi(self, OpenEyeTraining):
         OpenEyeTraining.setObjectName("OpenEyeTraining")
@@ -62,9 +64,13 @@ class Ui_OpenEyeTraining(object):
         self.button2.setText(_translate("OpenEyeTraining", "Start Training"))
         self.OpenEyesLabel.setText(_translate("OpenEyeTraining", "BB8 Open Eyes Training"))
         self.infoLabel.setText(_translate("OpenEyeTraining", "Click \"Start Training\" and close your eyes"))
-    def open_eyes_training(self, openeye):
-        training.train(eyesopen= openeye)
-        os.system('python2 ClosedEyeTraining.py')
+    def open_eyes_training(self):
+        self.closeEyeWindow = QtWidgets.QMainWindow()
+        self.ui = Ui_CloseEyeTraining()
+        self.ui.setupUi(self.closeEyeWindow)
+        #training.train(eyesopen= openeye)
+        #OpenEyeTraining.hide()
+        self.closeEyeWindow.show()
 
         
 
