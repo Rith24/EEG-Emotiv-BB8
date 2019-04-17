@@ -10,7 +10,12 @@ from emokit.emotiv import Emotiv
 from scipy import argmax, trapz
 from scipy.signal import periodogram
 from scipy.signal import butter, lfilter, periodogram
+import main_GUI
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+import WelcomeScreen
+
+import os
 avg_o1_alpha_eyesopen = 0.
 avg_o1_theta_eyesopen = 0.
 avg_o1_alpha_eyesclosed = 0.
@@ -70,19 +75,18 @@ def train(eyesopen):
     num_rec_packets = 3392  # 8000
     fs = 140
     packet_chunk_size = 2 * fs
-
     print 'Begin recording eyes',
-    if eyesopen:
-        mode = 'open'
-        print mode + '...'
-    else:
-        mode = 'closed'
-        print mode + '...'
-    raw_input('Press Enter to continue...')
+    # if eyesopen:
+    #     mode = 'open'
+    #     print mode + '...'
+    # else:
+    #     mode = 'closed'
+    #     print mode + '...'
+    # raw_input('Press Enter to continue...')
 
     packet_count = 0
     o1_data = []
-    with Emotiv(display_output=False, verbose=True) as headset:  #, input_source='emu_eyes' + mode + '.csv') as headset:
+    with Emotiv(display_output=False, verbose=False) as headset:  #, input_source='emu_eyes' + mode + '.csv') as headset:
         while packet_count < num_rec_packets:
             packet = headset.dequeue()
             if packet is not None:
@@ -121,15 +125,14 @@ def train(eyesopen):
 
 
 if __name__ == "__main__":
-    train(True)
-    train(False)
+    main_GUI.main()
     print
     print 'avg_o1_alpha_eyesopen', avg_o1_alpha_eyesopen
     print 'avg_o1_alpha_eyesclosed', avg_o1_alpha_eyesclosed
     print 'avg_o1_theta_eyesopen', avg_o1_theta_eyesopen
     print 'avg_o1_theta_eyesclosed', avg_o1_theta_eyesclosed
     print
-    print 'average_alpha', get_average_alpha()
-    print 'average_theta', get_average_theta()
+    print 'Ratio of Alpha and Theta eyesOpen', get_abt_o()
+    print 'Ratio of Alpha and Theta eyesClosed', get_abt_c()
     print
     print 'average alpha/theta', get_average_abt()
