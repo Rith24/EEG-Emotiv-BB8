@@ -2,7 +2,5 @@
 # so this "Dummy" file serves as an intermediary storage file; values from training_GUI.py are stored here and accessed
 # from emotiv_lsl_fft.py
 
-
-
 global use_abt_trained
 global abt_trained

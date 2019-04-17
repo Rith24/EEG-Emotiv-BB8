@@ -1,4 +1,6 @@
-import sys, signal, time
+import sys
+#import signal
+import time
 import numpy as np
 import scipy
 from scipy.signal import butter, lfilter, periodogram
@@ -7,9 +9,9 @@ from emokit.emotiv import Emotiv
 # from emoemu import Emotiv
 from bb8 import BB8
 # from bb8emu import BB8
-import training
-import training_GUI #edit#
-import dummy #edit#
+# import training
+import training_GUI  # edit#
+import dummy  # edit#
 
 # stream_name = 'BioSemi'
 # stream_type = 'EEG'
@@ -106,7 +108,6 @@ def color(c):
 
 
 def main():
-
     """
     avg_o1_alpha_eyesopen = 0.
     avg_o1_theta_eyesopen = 0.
@@ -129,23 +130,23 @@ def main():
     avg_o1_theta_eyesclosed = 1 #24.6003135031
     """
 
-   # training.train(eyesopen=True)
-    #training.train(eyesopen=False)
+    # training.train(eyesopen=True)
+    # training.train(eyesopen=False)
 
     training_GUI.vp_start_gui()
 
     use_abt_trained = dummy.use_abt_trained
     abt_trained = dummy.abt_trained
-   
+
     print(use_abt_trained)
     print(abt_trained)
     # abt_trained = ((avg_o1_alpha_eyesopen/avg_o1_theta_eyesopen) + (avg_o1_alpha_eyesclosed/avg_o1_theta_eyesclosed))/2
-    #abt_trained = training.get_average_abt()
-    
+    # abt_trained = training.get_average_abt()
+
     #
 
     raw_input('Training Complete. Press Enter to continue...')
-    
+
     data_arr = []
     with Emotiv(display_output=False, verbose=True) as headset:
         while True:
@@ -162,7 +163,7 @@ def main():
                         # Get Data for O1 and O2 channel
                         o1_data = [col[chans['O1']] for col in data_arr]
                         o2_data = [col[chans['O2']] for col in data_arr]
-                        
+
                         if len(o1_data) == len(o2_data):
                             for i in range(len(o1_data)):
                                 o1_data[i] = o1_data[i] - 4100
@@ -211,7 +212,7 @@ def main():
                                 color(green)
                                 print 'roll(True)'
                                 roll(True)
-                        
+
                         else:
                             if abs(o1_amplitude) > max_amplitude:  # or abs(o2_amplitude > max_amplitude):
                                 print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
@@ -227,13 +228,13 @@ def main():
                                 color(green)
                                 print 'roll(True)'
                                 roll(True)
-                            
+
                         data_arr = []
                         # now send it and wait for a bit
                         # outlet.push_sample(power_values_delta)
                         time.sleep(1.0 / sample_freq)
                 # else:
-                    # break
+                # break
             except KeyboardInterrupt:
                 break
 

@@ -10,12 +10,12 @@ from emokit.emotiv import Emotiv
 from scipy import argmax, trapz
 from scipy.signal import periodogram
 from scipy.signal import butter, lfilter, periodogram
-import main_GUI
+# import main_GUI
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-import WelcomeScreen
+# from PyQt5 import QtCore, QtGui, QtWidgets
+# import WelcomeScreen
+# import os
 
-import os
 avg_o1_alpha_eyesopen = 0.
 avg_o1_theta_eyesopen = 0.
 avg_o1_alpha_eyesclosed = 0.
@@ -125,7 +125,7 @@ def train(eyesopen):
 
 
 if __name__ == "__main__":
-    main_GUI.main()
+    # main_GUI.main()
     print
     print 'avg_o1_alpha_eyesopen', avg_o1_alpha_eyesopen
     print 'avg_o1_alpha_eyesclosed', avg_o1_alpha_eyesclosed

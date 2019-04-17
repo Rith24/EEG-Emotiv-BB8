@@ -1,7 +1,6 @@
-
-import sys
-#import training
-from functools import partial
+# import sys
+import training
+# from functools import partial
 
 try:
     import Tkinter as tk
@@ -10,21 +9,24 @@ except ImportError:
 
 try:
     import ttk
+
     py3 = False
 except ImportError:
     import tkinter.ttk as ttk
+
     py3 = True
 
 import training_GUI_support
 
-global eyes_open_collected
-global eyes_closed_collected
+# global eyes_open_collected
+# global eyes_closed_collected
 eyes_open_collected = False
 eyes_closed_collected = False
 
 
 def hello():
     print("hello")
+
 
 def hi():
     print("Hi")
@@ -35,20 +37,24 @@ def vp_start_gui():
     global val, w, root
     root = tk.Tk()
     training_GUI_support.set_Tk_var()
-    top = Toplevel1 (root)
+    top = Toplevel1(root)
     training_GUI_support.init(root, top)
     root.mainloop()
 
+
 w = None
+
+
 def create_Toplevel1(root, *args, **kwargs):
     '''Starting point when module is imported by another program.'''
     global w, w_win, rt
     rt = root
-    w = tk.Toplevel (root)
+    w = tk.Toplevel(root)
     training_GUI_support.set_Tk_var()
-    top = Toplevel1 (w)
+    top = Toplevel1(w)
     training_GUI_support.init(w, top, *args, **kwargs)
     return (w, top)
+
 
 def destroy_Toplevel1():
     global w
@@ -80,18 +86,15 @@ class Toplevel1:
             self.Label2.configure(text='''Complete''')
             self.Label1.configure(text='''Train (Eyes Open)''')
 
-
     def check_training_completion(self):
         if (self.eyes_open_collected == True) and (self.eyes_closed_collected == True):
-            #training_GUI.support.abt_trained = training.get_average_abt()
+            # training_GUI.support.abt_trained = training.get_average_abt()
             training_GUI_support.abt_trained = training_GUI_support.avg()
             self.Entry1.insert(0, training_GUI_support.abt_trained)
             print("complete")
-
-
         else:
             print("not complete")
-    
+
     def __init__(self, top=None):
         self.eyes_open_collected = eyes_open_collected
         self.eyes_closed_collected = eyes_closed_collected
@@ -100,9 +103,9 @@ class Toplevel1:
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85'
-        _ana2color = '#ececec' # Closest X11 color: 'gray92'
+        _compcolor = '#d9d9d9'  # X11 color: 'gray85'
+        _ana1color = '#d9d9d9'  # X11 color: 'gray85'
+        _ana2color = '#ececec'  # Closest X11 color: 'gray92'
 
         top.geometry("600x450+695+256")
         top.title("New Toplevel")
@@ -115,8 +118,9 @@ class Toplevel1:
         self.Button1.configure(activebackground="#ececec")
         self.Button1.configure(activeforeground="#000000")
         self.Button1.configure(background="#d9d9d9")
-        #self.Button1.configure(command=partial(training.train, eyesopen=True))
-        self.Button1.configure(command=lambda: [training.train(eyesopen=True), self.eyes_open(), self.check_training_completion()])
+        # self.Button1.configure(command=partial(training.train, eyesopen=True))
+        self.Button1.configure(
+            command=lambda: [training.train(eyesopen=True), self.eyes_open(), self.check_training_completion()])
         self.Button1.configure(disabledforeground="#a3a3a3")
         self.Button1.configure(foreground="#000000")
         self.Button1.configure(highlightbackground="#d9d9d9")
@@ -129,8 +133,9 @@ class Toplevel1:
         self.Button2.configure(activebackground="#ececec")
         self.Button2.configure(activeforeground="#000000")
         self.Button2.configure(background="#d9d9d9")
-        #self.Button2.configure(command=partial(training.train(eyesopen=False))
-        self.Button2.configure(command=lambda: [training.train(eyesopen=False), self.eyes_closed(), self.check_training_completion()])
+        # self.Button2.configure(command=partial(training.train(eyesopen=False))
+        self.Button2.configure(
+            command=lambda: [training.train(eyesopen=False), self.eyes_closed(), self.check_training_completion()])
         self.Button2.configure(disabledforeground="#a3a3a3")
         self.Button2.configure(foreground="#000000")
         self.Button2.configure(highlightbackground="#d9d9d9")
@@ -172,7 +177,7 @@ class Toplevel1:
         self.Label3.configure(text='''Set abt_trained''')
 
         self.Entry1 = tk.Entry(top)
-        self.Entry1.place(relx=0.3, rely=0.711,height=26, relwidth=0.29)
+        self.Entry1.place(relx=0.3, rely=0.711, height=26, relwidth=0.29)
         self.Entry1.configure(background="white")
         self.Entry1.configure(disabledforeground="#a3a3a3")
         self.Entry1.configure(font="TkFixedFont")
@@ -185,7 +190,7 @@ class Toplevel1:
 
         self.Frame1 = tk.Frame(top)
         self.Frame1.place(relx=0.183, rely=0.044, relheight=0.167
-                , relwidth=0.608)
+                          , relwidth=0.608)
         self.Frame1.configure(relief='groove')
         self.Frame1.configure(borderwidth="2")
         self.Frame1.configure(relief='groove')
@@ -207,7 +212,7 @@ class Toplevel1:
 
         self.Radiobutton1 = tk.Radiobutton(top)
         self.Radiobutton1.place(relx=0.65, rely=0.311, relheight=0.193
-                , relwidth=0.26)
+                                , relwidth=0.26)
         self.Radiobutton1.configure(activebackground="#ececec")
         self.Radiobutton1.configure(activeforeground="#000000")
         self.Radiobutton1.configure(background="#d9d9d9")
@@ -223,7 +228,7 @@ class Toplevel1:
 
         self.Radiobutton2 = tk.Radiobutton(top)
         self.Radiobutton2.place(relx=0.65, rely=0.467, relheight=0.138
-                , relwidth=0.308)
+                                , relwidth=0.308)
         self.Radiobutton2.configure(activebackground="#ececec")
         self.Radiobutton2.configure(activeforeground="#000000")
         self.Radiobutton2.configure(background="#d9d9d9")
@@ -233,8 +238,7 @@ class Toplevel1:
         self.Radiobutton2.configure(highlightbackground="#d9d9d9")
         self.Radiobutton2.configure(highlightcolor="black")
         self.Radiobutton2.configure(justify='left')
-        self.Radiobutton2.configure(text='''Use instantaneous 
- abt comparison''')
+        self.Radiobutton2.configure(text='''Use instantaneous abt comparison''')
         self.Radiobutton2.configure(value="2")
         self.Radiobutton2.configure(variable=training_GUI_support.choice)
 
@@ -243,7 +247,9 @@ class Toplevel1:
         self.Button3.configure(activebackground="#ececec")
         self.Button3.configure(activeforeground="#000000")
         self.Button3.configure(background="#d9d9d9")
-        self.Button3.configure(command=lambda:[training_GUI_support.return_to_main_program(training_GUI_support.use_abt_trained, training_GUI_support.abt_trained)])
+        self.Button3.configure(command=lambda: [
+            training_GUI_support.return_to_main_program(training_GUI_support.use_abt_trained,
+                                                        training_GUI_support.abt_trained)])
         self.Button3.configure(disabledforeground="#a3a3a3")
         self.Button3.configure(foreground="#000000")
         self.Button3.configure(highlightbackground="#d9d9d9")
@@ -268,8 +274,3 @@ class Toplevel1:
 
 if __name__ == '__main__':
     vp_start_gui()
-
-
-
-
-
