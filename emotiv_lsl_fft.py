@@ -8,6 +8,8 @@ from emokit.emotiv import Emotiv
 from bb8 import BB8
 # from bb8emu import BB8
 import training
+import training_GUI #edit#
+import dummy #edit#
 
 # stream_name = 'BioSemi'
 # stream_type = 'EEG'
@@ -127,11 +129,20 @@ def main():
     avg_o1_theta_eyesclosed = 1 #24.6003135031
     """
 
-    training.train(eyesopen=True)
-    training.train(eyesopen=False)
-    
+   # training.train(eyesopen=True)
+    #training.train(eyesopen=False)
+
+    training_GUI.vp_start_gui()
+
+    use_abt_trained = dummy.use_abt_trained
+    abt_trained = dummy.abt_trained
+   
+    print(use_abt_trained)
+    print(abt_trained)
     # abt_trained = ((avg_o1_alpha_eyesopen/avg_o1_theta_eyesopen) + (avg_o1_alpha_eyesclosed/avg_o1_theta_eyesclosed))/2
-    abt_trained = training.get_average_abt()
+    #abt_trained = training.get_average_abt()
+    
+    #
 
     raw_input('Training Complete. Press Enter to continue...')
     
@@ -185,22 +196,38 @@ def main():
                         print 'O2 Alpha:', ap_o2, '|', 'O2 Theta:', tp_o2, '|', 'O2 Alpha/Theta:', abt_o2
                         print 'Avg Alpha/Theta:', abt_avg, '|', 'Trained Avg Alpha/Theta:', abt_trained
 
-
-                        if abs(o1_amplitude) > max_amplitude:  # or abs(o2_amplitude > max_amplitude):
-                            print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
-                            print 'color(yellow)'
-                            color(yellow)
-                        elif abt_o1 > abt_avg:
-                            print 'color(purple)'
-                            color(purple)
-                            print 'roll(False)'
-                            roll(False)
+                        if use_abt_trained == False:
+                            if abs(o1_amplitude) > max_amplitude:  # or abs(o2_amplitude > max_amplitude):
+                                print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
+                                print 'color(yellow)'
+                                color(yellow)
+                            elif abt_o1 > abt_avg:
+                                print 'color(purple)'
+                                color(purple)
+                                print 'roll(False)'
+                                roll(False)
+                            else:
+                                print 'color(green)'
+                                color(green)
+                                print 'roll(True)'
+                                roll(True)
+                        
                         else:
-                            print 'color(green)'
-                            color(green)
-                            print 'roll(True)'
-                            roll(True)
-
+                            if abs(o1_amplitude) > max_amplitude:  # or abs(o2_amplitude > max_amplitude):
+                                print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
+                                print 'color(yellow)'
+                                color(yellow)
+                            elif abt_o1 > abt_trained:
+                                print 'color(purple)'
+                                color(purple)
+                                print 'roll(False)'
+                                roll(False)
+                            else:
+                                print 'color(green)'
+                                color(green)
+                                print 'roll(True)'
+                                roll(True)
+                            
                         data_arr = []
                         # now send it and wait for a bit
                         # outlet.push_sample(power_values_delta)
