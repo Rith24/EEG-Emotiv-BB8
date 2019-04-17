@@ -32,6 +32,9 @@ except ImportError:
 # def avg():
 #   avg = (num1+num2)/2
 #  return avg
+abt_trained = 0
+use_abt_trained = True
+
 def set_Tk_var():
     global choice
     choice = tk.StringVar()
@@ -46,7 +49,9 @@ def processEntry():
     sys.stdout.flush()
 
 
-def return_to_main_program(use_abt_trained, abt_trained):
+def return_to_main_program():
+    global abt_trained
+    global use_abt_trained
     dummy.use_abt_trained = use_abt_trained
     dummy.abt_trained = abt_trained
     # test.use_abt_trained = use_abt_trained

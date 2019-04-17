@@ -89,13 +89,15 @@ class Toplevel1:
     def check_training_completion(self):
         if (self.eyes_open_collected == True) and (self.eyes_closed_collected == True):
             # training_GUI.support.abt_trained = training.get_average_abt()
-            training_GUI_support.abt_trained = training_GUI_support.avg()
+            training_GUI_support.abt_trained = training.get_average_abt()
             self.Entry1.insert(0, training_GUI_support.abt_trained)
             print("complete")
         else:
             print("not complete")
 
     def __init__(self, top=None):
+        global abt_trained
+        global use_abt_trained
         self.eyes_open_collected = eyes_open_collected
         self.eyes_closed_collected = eyes_closed_collected
 
@@ -248,8 +250,7 @@ class Toplevel1:
         self.Button3.configure(activeforeground="#000000")
         self.Button3.configure(background="#d9d9d9")
         self.Button3.configure(command=lambda: [
-            training_GUI_support.return_to_main_program(training_GUI_support.use_abt_trained,
-                                                        training_GUI_support.abt_trained)])
+            training_GUI_support.return_to_main_program()])
         self.Button3.configure(disabledforeground="#a3a3a3")
         self.Button3.configure(foreground="#000000")
         self.Button3.configure(highlightbackground="#d9d9d9")
