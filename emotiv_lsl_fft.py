@@ -223,7 +223,7 @@ def main():
                                 print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
                                 print 'color(yellow)'
                                 color(yellow)
-                            elif abt_o1 > abt_trained:
+                            elif abt_avg > abt_trained:
                                 print 'color(purple)'
                                 color(purple)
                                 print 'roll(False)'
