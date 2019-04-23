@@ -8,7 +8,6 @@ from time import sleep
 from emokit.emotiv import Emotiv
 # from emoemu import Emotiv
 from scipy import argmax, trapz
-from scipy.signal import periodogram
 from scipy.signal import butter, lfilter, periodogram
 # import main_GUI
 
@@ -16,16 +15,20 @@ from scipy.signal import butter, lfilter, periodogram
 # import WelcomeScreen
 # import os
 
-avg_o1_alpha_eyesopen = 0.
-avg_o1_theta_eyesopen = 0.
-avg_o1_alpha_eyesclosed = 0.
-avg_o1_theta_eyesclosed = 0.
+# avg_o1_alpha_eyesopen = 0.
+# avg_o1_theta_eyesopen = 0.
+# avg_o1_alpha_eyesclosed = 0.
+# avg_o1_theta_eyesclosed = 0.
 
-avg_o2_alpha_eyesopen = 0.
-avg_o2theta_eyesopen = 0.
-avg_o2_alpha_eyesclosed = 0.
-avg_o2_theta_eyesclosed = 0.
+# avg_o2_alpha_eyesopen = 0.
+# avg_o2theta_eyesopen = 0.
+# avg_o2_alpha_eyesclosed = 0.
+# avg_o2_theta_eyesclosed = 0.
 
+o1_abt_eyesOpen = 0.
+o1_abt_eyesClosed = 0.
+o2_abt_eyesOpen = 0.
+o2_abt_eyesClosed = 0.
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -49,38 +52,43 @@ def calc(x, fmin, fmax, fs):
     y = trapz(Pxx[ind_min: ind_max], f[ind_min: ind_max])
     return y
 
+#averaging o1_abt_eyesOpen and o1_abt_eyesClosed
+def get_avg_abt_o1():
+    global o1_abt_eyesClosed
+    global o1_abt_eyesOpen
+    return ((o1_abt_eyesClosed + o1_abt_eyesOpen)  / 2)
 
-def get_abt_o():
-    global avg_o1_alpha_eyesopen
-    global avg_o1_theta_eyesopen
-    return (avg_o1_alpha_eyesopen / avg_o1_theta_eyesopen)
-
-
-def get_abt_c():
-    global avg_o1_alpha_eyesclosed
-    global avg_o1_theta_eyesclosed
-    return (avg_o1_alpha_eyesclosed / avg_o1_theta_eyesclosed)
+#averaging o2_abt_eyesOpen and o2_abt_eyesClosed
+def get_avg_abt_o2():
+    global o2_abt_eyesClosed
+    global o2_abt_eyesOpen
+    return ((o2_abt_eyesClosed+ o2_abt_eyesOpen)/ 2 )
 
 
 def get_average_abt():
-    return (get_abt_o() + get_abt_c())/2
+    return (get_avg_abt_o1() + get_avg_abt_o2())/2
 
 
 def train(eyesopen):
-    global avg_o1_alpha_eyesopen
-    global avg_o1_theta_eyesopen
-    global avg_o1_alpha_eyesclosed
-    global avg_o1_theta_eyesclosed
+    global o1_abt_eyesOpen
+    global o1_abt_eyesClosed 
+    global o2_abt_eyesOpen 
+    global o2_abt_eyesClosed
 
-    o1_alphas_eyesopen = []
-    o1_thetas_eyesopen = []
-    o1_alphas_eyesclosed = []
-    o1_thetas_eyesclosed = []
+    # o1_alphas_eyesopen = []
+    # o1_thetas_eyesopen = []
+    # o1_alphas_eyesclosed = []
+    # o1_thetas_eyesclosed = []
 
-    o2_alphas_eyesopen = []
-    o2_thetas_eyesopen = []
-    o2_alphas_eyesclosed = []
-    o2_thetas_eyesclosed = []
+    # o2_alphas_eyesopen = []
+    # o2_thetas_eyesopen = []
+    # o2_alphas_eyesclosed = []
+    # o2_thetas_eyesclosed = []
+
+    o1_abt_eyesOpen= []
+    o1_abt_eyesClose = []
+    o2_abt_eyesClose = []
+    o2_abt_eyesOpen = []
 
     num_rec_packets = 3392  # 8000
     fs = 140
@@ -119,38 +127,62 @@ def train(eyesopen):
                     print('after subtraction and filtering')
                     print("max O1: {} | max O2: {}".format(max(o1_data), max(o2_data)))
                     print("min O1: {} | min O2: {}".format(min(o1_data), min(o2_data)))
+
+                    #Calculating power values of alpha and theta.
+                    #Appending ratio of power values of alpha and theta to the list
                     if eyesopen:
-                        o1_alphas_eyesopen.append(calc(o1_data, 10, 12, fs))
-                        o2_alphas_eyesopen.append(calc(o2_data, 10, 12, fs ))
-                        o1_thetas_eyesopen.append(calc(o1_data, 4, 8, fs))
-                        o2_thetas_eyesopen.append(calc(o2_data, 4, 8, fs))
+                        # o1_ap = calc(o1_data, 10, 12, fs)
+                        # o1_tp = calc(o1_data, 4, 8, fs)
+                        # 01_abts_eyesopen.append(o1_ap/o1_tp)
+                        o1_ap = calc(o1_data, 10, 12, fs)
+                        o1_tp = calc(o1_data, 4, 8, fs)
+                        o1_abt_eyesOpen.append(o1_ap/o1_tp)
+                        
+                        o2_ap = calc(o2_data, 10, 12, fs)
+                        o2_tp = calc(o2_data, 4, 8, fs)
+                        o1_abt_eyesOpen.append(o2_ap/o2_tp)
+
+                        # o1_alphas_eyesopen.append(calc(o1_data, 10, 12, fs))
+                        # o2_alphas_eyesopen.append(calc(o2_data, 10, 12, fs ))
+                        # o1_thetas_eyesopen.append(calc(o1_data, 4, 8, fs))
+                        # o2_thetas_eyesopen.append(calc(o2_data, 4, 8, fs))
                     else:
-                        o1_alphas_eyesclosed.append(calc(o1_data, 10, 12, fs))
-                        o1_thetas_eyesclosed.append(calc(o1_data, 4, 8, fs))
-                        o2_alphas_eyesclosed.append(calc(o2_data, 10, 12, fs ))
-                        o2_thetas_eyesclosed.append(calc(o2_data, 4, 8, fs ))
+                        # o1_alphas_eyesclosed.append(calc(o1_data, 10, 12, fs))
+                        # o1_thetas_eyesclosed.append(calc(o1_data, 4, 8, fs))
+                        # o2_alphas_eyesclosed.append(calc(o2_data, 10, 12, fs ))
+                        # o2_thetas_eyesclosed.append(calc(o2_data, 4, 8, fs ))
+
+                        o1_ap = calc(o1_data, 10, 12, fs)
+                        o1_tp = calc(o1_data, 4, 8, fs)
+                        o1_abt_eyesClose.append(o1_ap/o1_tp)
+                        
+                        o2_ap = calc(o2_data, 10, 12, fs)
+                        o2_tp = calc(o2_data, 4, 8, fs)
+                        o1_abt_eyesClose.append(o2_ap/o2_tp)
                     o1_data = []
+                    o2_data = []
                 else:
                     o1_data.append(o1_value)
+                    o2_data.appen(o2_value)
             sleep(1 / fs)
 
     if eyesopen:
-        avg_o1_alpha_eyesopen = sum(o1_alphas_eyesopen) / len(o1_alphas_eyesopen)
-        avg_o1_theta_eyesopen = sum(o1_thetas_eyesopen) / len(o1_thetas_eyesopen)
+        o1_abt_eyesOpen = sum(o1_abt_eyesOpen) / len(o1_abt_eyesOpen)
+        o2_abt_eyesOpen = sum(o2_abt_eyesOpen) / len(o2_abt_eyesOpen)
     else:
-        avg_o1_alpha_eyesclosed = sum(o1_alphas_eyesclosed) / len(o1_alphas_eyesclosed)
-        avg_o1_theta_eyesclosed = sum(o1_thetas_eyesclosed) / len(o1_thetas_eyesclosed)
+        o1_abt_eyesClosed = sum(o1_abt_eyesClose) / len(o1_abt_eyesClose)
+        o2_abt_eyesClosed = sum(o2_abt_eyesClose) / len(o2_abt_eyesClose)
 
 
 if __name__ == "__main__":
     # main_GUI.main()
     print
-    print 'avg_o1_alpha_eyesopen', avg_o1_alpha_eyesopen
-    print 'avg_o1_alpha_eyesclosed', avg_o1_alpha_eyesclosed
-    print 'avg_o1_theta_eyesopen', avg_o1_theta_eyesopen
-    print 'avg_o1_theta_eyesclosed', avg_o1_theta_eyesclosed
+    print 'o1_abt_eyesOpen', o1_abt_eyesOpen
+    print 'o2_abt_eyesOpen', o2_abt_eyesOpen
+    print 'o1_abt_eyesClosed', o1_abt_eyesClosed
+    print 'o2_abt_eyesClosed', o2_abt_eyesClosed
     print
-    print 'Ratio of Alpha and Theta eyesOpen', get_abt_o()
-    print 'Ratio of Alpha and Theta eyesClosed', get_abt_c()
+    print 'Ratio of Alpha and Theta eyesOpen', get_avg_abt_o1()
+    print 'Ratio of Alpha and Theta eyesClosed', get_avg_abt_o2()
     print
     print 'average alpha/theta', get_average_abt()
