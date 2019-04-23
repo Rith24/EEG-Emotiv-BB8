@@ -34,7 +34,7 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     y = lfilter(b, a, data)
     return y
-    
+
 
 def calc(x, fmin, fmax, fs):
     x = np.asarray(x, dtype=np.float64)
@@ -48,7 +48,7 @@ def calc(x, fmin, fmax, fs):
 def get_abt_o():
     global avg_o1_alpha_eyesopen
     global avg_o1_theta_eyesopen
-    return (avg_o1_alpha_eyesopen / avg_o1_theta_eyesopen) 
+    return (avg_o1_alpha_eyesopen / avg_o1_theta_eyesopen)
 
 
 def get_abt_c():
@@ -86,25 +86,29 @@ def train(eyesopen):
 
     packet_count = 0
     o1_data = []
+    o2_data = []
     with Emotiv(display_output=False, verbose=False) as headset:  #, input_source='emu_eyes' + mode + '.csv') as headset:
         while packet_count < num_rec_packets:
             packet = headset.dequeue()
             if packet is not None:
                 packet_count += 1
                 o1_value = headset.sensors['O1']['value']
+                o2_value = headset.sensors['O2']['value']
                 if packet_count != 0 and packet_count % packet_chunk_size == 0:
-                    print('before subtraction and division')
+                    print('before subtraction and filtering')
                     print(max(o1_data))
                     print(min(o1_data))
                     for i in range(len(o1_data)):
-                        o1_data[i] = o1_data[i] - 4300
+                        o1_data[i] = o1_data[i] - 4100
+                        o2_data[i] = o2_data[i] - 4100
                         # o1_data[i] = o1_data[i]/6
                     # Filtering
-                    bp_low, bp_high, sample_freq = 1, 50, 140
-                    o1_data = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
-                    print('after subtraction, division, and filtering')
-                    print(max(o1_data))
-                    print(min(o1_data))
+                    bp_low, bp_high = 1, 50
+                    o1_data = butter_bandpass_filter(o1_data, bp_low, bp_high, fs, order=5)
+                    o2_data = butter_bandpass_filter(o2_data, bp_low, bp_high, fs, order=5)
+                    print('after subtraction and filtering')
+                    print("max O1: {} | max O2: {}".format(max(o1_data), max(o2_data)))
+                    print("min O1: {} | min O2: {}".format(min(o1_data), min(o2_data)))
                     if eyesopen:
                         o1_alphas_eyesopen.append(calc(o1_data, 10, 12, fs))
                         o1_thetas_eyesopen.append(calc(o1_data, 4, 8, fs))
