@@ -21,6 +21,11 @@ avg_o1_theta_eyesopen = 0.
 avg_o1_alpha_eyesclosed = 0.
 avg_o1_theta_eyesclosed = 0.
 
+avg_o2_alpha_eyesopen = 0.
+avg_o2theta_eyesopen = 0.
+avg_o2_alpha_eyesclosed = 0.
+avg_o2_theta_eyesclosed = 0.
+
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -72,6 +77,11 @@ def train(eyesopen):
     o1_alphas_eyesclosed = []
     o1_thetas_eyesclosed = []
 
+    o2_alphas_eyesopen = []
+    o2_thetas_eyesopen = []
+    o2_alphas_eyesclosed = []
+    o2_thetas_eyesclosed = []
+
     num_rec_packets = 3392  # 8000
     fs = 140
     packet_chunk_size = 2 * fs
@@ -111,10 +121,14 @@ def train(eyesopen):
                     print("min O1: {} | min O2: {}".format(min(o1_data), min(o2_data)))
                     if eyesopen:
                         o1_alphas_eyesopen.append(calc(o1_data, 10, 12, fs))
+                        o2_alphas_eyesopen.append(calc(o2_data, 10, 12, fs ))
                         o1_thetas_eyesopen.append(calc(o1_data, 4, 8, fs))
+                        o2_thetas_eyesopen.append(calc(o2_data, 4, 8, fs))
                     else:
                         o1_alphas_eyesclosed.append(calc(o1_data, 10, 12, fs))
                         o1_thetas_eyesclosed.append(calc(o1_data, 4, 8, fs))
+                        o2_alphas_eyesclosed.append(calc(o2_data, 10, 12, fs ))
+                        o2_thetas_eyesclosed.append(calc(o2_data, 4, 8, fs ))
                     o1_data = []
                 else:
                     o1_data.append(o1_value)
