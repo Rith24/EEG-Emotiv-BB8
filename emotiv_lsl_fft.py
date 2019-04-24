@@ -46,7 +46,7 @@ chans = dict(F3=0,
              FC6=12,
              F4=13)
 
-num_packets = 128  # 64
+num_packets = 140  # 64
 bp_low = 1.
 bp_high = 50.
 thresh_low = -100
