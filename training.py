@@ -97,7 +97,7 @@ def train(eyesopen):
 
     num_rec_packets = 3392  # 8000
     fs = 140
-    packet_chunk_size = 2 * fs
+    packet_chunk_size = 128  # 2 * fs
     print 'Begin recording eyes',
     # if eyesopen:
     #     mode = 'open'
@@ -127,8 +127,8 @@ def train(eyesopen):
                     print("min O1: {} | min O2: {}".format(
                         min(o1_data), min(o2_data)))
                     for i in range(len(o1_data)):
-                        o1_data[i] = o1_data[i] - 4100
-                        o2_data[i] = o2_data[i] - 4100
+                        o1_data[i] = o1_data[i] - 4300
+                        o2_data[i] = o2_data[i] - 4300
                         # o1_data[i] = o1_data[i]/6
                     # Filtering
                     bp_low, bp_high = 1, 50

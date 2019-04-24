@@ -46,7 +46,7 @@ chans = dict(F3=0,
              FC6=12,
              F4=13)
 
-num_packets = 280  # 64
+num_packets = 128  # 64
 bp_low = 1.
 bp_high = 50.
 thresh_low = -100
@@ -169,8 +169,8 @@ def main():
 
                         if len(o1_data) == len(o2_data):
                             for i in range(len(o1_data)):
-                                o1_data[i] = o1_data[i] - 4100
-                                o2_data[i] = o2_data[i] - 4100
+                                o1_data[i] = o1_data[i] - 4300
+                                o2_data[i] = o2_data[i] - 4300
 
                         # Filtering
                         o1_data_filt = butter_bandpass_filter(
