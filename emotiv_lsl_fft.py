@@ -1,4 +1,6 @@
-import sys, signal, time
+import sys
+import signal
+import time
 import numpy as np
 import scipy
 from scipy.signal import butter, lfilter, periodogram
@@ -8,8 +10,8 @@ from emokit.emotiv import Emotiv
 from bb8 import BB8
 # from bb8emu import BB8
 import training
-import training_GUI #edit#
-import dummy #edit#
+import training_GUI  # edit#
+import dummy  # edit#
 
 # stream_name = 'BioSemi'
 # stream_type = 'EEG'
@@ -26,7 +28,8 @@ eeg_bands = {'Delta': (0, 4),
              'Beta': (12, 30),
              'Gamma': (30, 45)}
 
-ch_names = ['F3', 'FC5', 'AF3', 'F7', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'F8', 'AF4', 'FC6', 'F4']
+ch_names = ['F3', 'FC5', 'AF3', 'F7', 'T7', 'P7',
+            'O1', 'O2', 'P8', 'T8', 'F8', 'AF4', 'FC6', 'F4']
 
 chans = dict(F3=0,
              FC5=1,
@@ -43,7 +46,7 @@ chans = dict(F3=0,
              FC6=12,
              F4=13)
 
-num_packets = 64
+num_packets = 280  # 64
 bp_low = 1.
 bp_high = 50.
 thresh_low = -100
@@ -58,6 +61,9 @@ angle = 60
 purple = [0xff, 0x00, 0xff, 0]
 green = [0x00, 0xff, 0x00, 0]
 yellow = [0xff, 0xff, 0x00, 0]
+
+# abt value from the previous window
+previous_avg = 0
 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -104,50 +110,46 @@ def color(c):
     global bb
     bb.cmd(0x02, 0x20, c)
 
-# abt value from the previous window
-previous_avg = 0
 
 def main():
-
+    global previous_avg
     """
     avg_o1_alpha_eyesopen = 0.
     avg_o1_theta_eyesopen = 0.
     avg_o1_alpha_eyesclosed = 0.
     avg_o1_theta_eyesclosed = 0.
-    
+
     avg_o1_alpha_eyesopen =22.8203556961
     avg_o1_alpha_eyesclosed =21.3627777428
     avg_o1_theta_eyesopen =136.277341318
     avg_o1_theta_eyesclosed =171.116188896
-    
+
     avg_o1_alpha_eyesopen 26.6371945105
     avg_o1_alpha_eyesclosed 51.7758978465
     avg_o1_theta_eyesopen 222.906163651
     avg_o1_theta_eyesclosed 285.299625622
-    
+
     avg_o1_alpha_eyesopen = 3.56621148132
     avg_o1_alpha_eyesclosed = 4.28481369505
     avg_o1_theta_eyesopen = 1 #22.5621196167
     avg_o1_theta_eyesclosed = 1 #24.6003135031
     """
 
-   # training.train(eyesopen=True)
-    #training.train(eyesopen=False)
+    # training.train(eyesopen=True)
+    # training.train(eyesopen=False)
 
     training_GUI.vp_start_gui()
 
     use_abt_trained = dummy.use_abt_trained
     abt_trained = dummy.abt_trained
-   
-    #print(use_abt_trained)
-    #print(abt_trained)
+
+    # print(use_abt_trained)
+    # print(abt_trained)
     # abt_trained = ((avg_o1_alpha_eyesopen/avg_o1_theta_eyesopen) + (avg_o1_alpha_eyesclosed/avg_o1_theta_eyesclosed))/2
     #abt_trained = training.get_average_abt()
-    
-    #
 
     raw_input('Training Complete. Press Enter to continue...')
-    
+
     data_arr = []
     with Emotiv(display_output=False, verbose=True) as headset:
         while True:
@@ -164,15 +166,17 @@ def main():
                         # Get Data for O1 and O2 channel
                         o1_data = [col[chans['O1']] for col in data_arr]
                         o2_data = [col[chans['O2']] for col in data_arr]
-                        
+
                         if len(o1_data) == len(o2_data):
                             for i in range(len(o1_data)):
                                 o1_data[i] = o1_data[i] - 4100
                                 o2_data[i] = o2_data[i] - 4100
 
                         # Filtering
-                        o1_data_filt = butter_bandpass_filter(o1_data, bp_low, bp_high, sample_freq, order=5)
-                        o2_data_filt = butter_bandpass_filter(o2_data, bp_low, bp_high, sample_freq, order=5)
+                        o1_data_filt = butter_bandpass_filter(
+                            o1_data, bp_low, bp_high, sample_freq, order=5)
+                        o2_data_filt = butter_bandpass_filter(
+                            o2_data, bp_low, bp_high, sample_freq, order=5)
 
                         # Thresholding
                         o1_amplitude = max(o1_data) - min(o1_data)
@@ -194,17 +198,20 @@ def main():
                         abt_avg = (abt_o1 + abt_o2) / 2
 
                         print '#' * 80
-                        print 'O1 Alpha:', ap_o1, '|', 'O1 Theta:', tp_o1, '|', 'O1 Alpha/Theta:', abt_o1
-                        print 'O2 Alpha:', ap_o2, '|', 'O2 Theta:', tp_o2, '|', 'O2 Alpha/Theta:', abt_o2
+                        print 'O1 Alpha:', ap_o1, '|', 'O1 Theta:', tp_o1
+                        print 'O1 Alpha/Theta:', abt_o1
+                        print 'O2 Alpha:', ap_o2, '|', 'O2 Theta:', tp_o2
+                        print 'O2 Alpha/Theta:', abt_o2
                         print 'Avg Alpha/Theta:', abt_avg, '|', 'Trained Avg Alpha/Theta:', abt_trained
 
                         if use_abt_trained == False:
-                            if abs(o1_amplitude) > max_amplitude:  # or abs(o2_amplitude > max_amplitude):
+                            # or abs(o2_amplitude > max_amplitude):
+                            if abs(o1_amplitude) > max_amplitude:
                                 print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
                                 print 'color(yellow)'
                                 color(yellow)
 
-                            # might change to < if value decreases in each successive window (meditative state)    
+                            # might change to < if value decreases in each successive window (meditative state)
                             elif abt_avg > previous_avg:
                                 print 'color(purple)'
                                 color(purple)
@@ -217,9 +224,10 @@ def main():
                                 roll(True)
 
                             previous_avg = abt_avg
-                        
+
                         else:
-                            if abs(o1_amplitude) > max_amplitude:  # or abs(o2_amplitude > max_amplitude):
+                            # or abs(o2_amplitude > max_amplitude):
+                            if abs(o1_amplitude) > max_amplitude:
                                 print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
                                 print 'color(yellow)'
                                 color(yellow)
@@ -233,7 +241,7 @@ def main():
                                 color(green)
                                 print 'roll(True)'
                                 roll(True)
-                            
+
                         data_arr = []
                         # now send it and wait for a bit
                         # outlet.push_sample(power_values_delta)
