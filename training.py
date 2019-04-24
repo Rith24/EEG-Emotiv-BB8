@@ -155,6 +155,11 @@ def train(eyesopen):
                         o2_ap = calc(o2_data, 10, 12, fs)
                         o2_tp = calc(o2_data, 4, 8, fs)
                         o2_abt_values_eyesOpen.append(o2_ap / o2_tp)
+                        
+                        print 'O1 Alpha:', o1_ap, '|', 'O1 Theta:', o1_tp
+                        print 'O1 Alpha/Theta:', o1_ap / o1_tp
+                        print 'O2 Alpha:', o2_ap, '|', 'O2 Theta:', o2_tp
+                        print 'O2 Alpha/Theta:', o2_ap / o2_tp
 
                         # o1_alphas_eyesopen.append(calc(o1_data, 10, 12, fs))
                         # o2_alphas_eyesopen.append(calc(o2_data, 10, 12, fs ))
