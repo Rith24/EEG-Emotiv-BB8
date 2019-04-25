@@ -55,6 +55,7 @@ max_amplitude = 200
 
 MAC_ADDR = 'F2:D8:37:4B:CE:F1'
 bb = BB8(MAC_ADDR)
+bb.cmd(0x02, 0x20, [0x10, 0x10, 0x10, 0])
 bb.cmd(0x02, 0x21, [0xff])
 heading = 0
 angle = 60
