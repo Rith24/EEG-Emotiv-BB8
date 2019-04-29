@@ -1,5 +1,5 @@
 import sys
-import signal
+# import signal
 import time
 import numpy as np
 import scipy
@@ -9,7 +9,7 @@ from emokit.emotiv import Emotiv
 # from emoemu import Emotiv
 from bb8 import BB8
 # from bb8emu import BB8
-import training
+# import training
 import training_GUI  # edit#
 import dummy  # edit#
 
@@ -147,12 +147,12 @@ def main():
     # print(use_abt_trained)
     # print(abt_trained)
     # abt_trained = ((avg_o1_alpha_eyesopen/avg_o1_theta_eyesopen) + (avg_o1_alpha_eyesclosed/avg_o1_theta_eyesclosed))/2
-    #abt_trained = training.get_average_abt()
+    # abt_trained = training.get_average_abt()
 
     raw_input('Training Complete. Press Enter to continue...')
 
     data_arr = []
-    with Emotiv(display_output=False, verbose=True) as headset:
+    with Emotiv(display_output=False, write=True, verbose=True) as headset:
         while True:
             try:
                 packet = headset.dequeue()
