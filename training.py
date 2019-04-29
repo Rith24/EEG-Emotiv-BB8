@@ -111,7 +111,7 @@ def train(eyesopen):
     o1_data = []
     o2_data = []
     # , input_source='emu_eyes' + mode + '.csv') as headset:
-    with Emotiv(display_output=False, verbose=False) as headset:
+    with Emotiv(display_output=False, write=True, verbose=False) as headset:
         while packet_count < num_rec_packets:
             packet = headset.dequeue()
             if packet is not None:
