@@ -272,6 +272,28 @@ class Toplevel1:
         self.Button4.configure(text='''Enter''')
         self.Button4.configure(width=58)
 
+        self.Button5 = tk.Button(top)
+        self.Button5.place(relx=0.333, rely=0.222, height=42, width=47)
+        self.Button5.configure(activebackground="#ececec")
+        self.Button5.configure(activeforeground="#000000")
+        self.Button5.configure(background="#d9d9d9")
+        self.Button5.configure(disabledforeground="#a3a3a3")
+        self.Button5.configure(foreground="#000000")
+        self.Button5.configure(highlightbackground="#d9d9d9")
+        self.Button5.configure(highlightcolor="black")
+        self.Button5.configure(pady="0")
+        self.Button5.configure(text='''Test''')
+        self.Button5.configure(command = training_GUI_support.test_connection)
+
+        self.Label5 = tk.Label(top)
+        self.Label5.place(relx=0.017, rely=0.222, height=41, width=147)
+        self.Label5.configure(background="#d9d9d9")
+        self.Label5.configure(disabledforeground="#a3a3a3")
+        self.Label5.configure(foreground="#000000")
+        self.Label5.configure(text='''BB8 Connection''')
+        self.Label5.configure(width=147)
+
+
 
 if __name__ == '__main__':
     vp_start_gui()
