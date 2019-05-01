@@ -4,3 +4,4 @@
 
 global use_abt_trained
 global abt_trained
+global bb

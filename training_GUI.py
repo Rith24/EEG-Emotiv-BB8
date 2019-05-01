@@ -283,7 +283,7 @@ class Toplevel1:
         self.Button5.configure(highlightcolor="black")
         self.Button5.configure(pady="0")
         self.Button5.configure(text='''Test''')
-        self.Button5.configure(command = training_GUI_support.test_connection)
+        self.Button5.configure(command=training_GUI_support.test_connection)
 
         self.Label5 = tk.Label(top)
         self.Label5.place(relx=0.017, rely=0.222, height=41, width=147)

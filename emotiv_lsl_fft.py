@@ -62,6 +62,7 @@ angle = 60
 purple = [0xff, 0x00, 0xff, 0]
 green = [0x00, 0xff, 0x00, 0]
 yellow = [0xff, 0xff, 0x00, 0]
+dummy.bb = bb
 
 # abt value from the previous window
 previous_avg = 0
