@@ -5,6 +5,7 @@ responsible for training data
 
 import numpy as np
 from time import sleep
+from datetime import datetime
 from emokit.emotiv import Emotiv
 # from emoemu import Emotiv
 from scipy import argmax, trapz
@@ -99,19 +100,25 @@ def train(eyesopen):
     fs = 140
     packet_chunk_size = 140  # 2 * fs
     print 'Begin recording eyes',
-    # if eyesopen:
-    #     mode = 'open'
-    #     print mode + '...'
-    # else:
-    #     mode = 'closed'
-    #     print mode + '...'
+    if eyesopen:
+        mode = 'open'
+        print mode + '...'
+    else:
+        mode = 'closed'
+        print mode + '...'
     # raw_input('Press Enter to continue...')
 
     packet_count = 0
     o1_data = []
     o2_data = []
-    # , input_source='emu_eyes' + mode + '.csv') as headset:
-    with Emotiv(display_output=False, write=True, verbose=False) as headset:
+    # input_source='emu_eyes' + mode + '.csv') as headset:
+    ts = str(datetime.now()).replace(':', '-')
+    output_fname = "emotiv_training_eyes_%s_%s.csv" % (mode, ts)
+    # create the file before trying to write to it
+    f = open(output_fname, "w")
+    f.close()
+    with Emotiv(display_output=False, write=True,
+                output_path=output_fname, verbose=False) as headset:
         while packet_count < num_rec_packets:
             packet = headset.dequeue()
             if packet is not None:

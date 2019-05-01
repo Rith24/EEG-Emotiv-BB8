@@ -1,6 +1,7 @@
 import sys
 # import signal
 import time
+from datetime import datetime
 import numpy as np
 import scipy
 from scipy.signal import butter, lfilter, periodogram
@@ -155,7 +156,13 @@ def main():
     raw_input('Training Complete. Press Enter to continue...')
 
     data_arr = []
-    with Emotiv(display_output=False, write=True, verbose=True) as headset:
+    ts = str(datetime.now()).replace(':', '-')
+    output_fname = "emotiv_session_%s.csv" % ts
+    # create the file before trying to write to it
+    f = open(output_fname, "w")
+    f.close()
+    with Emotiv(display_output=False, write=True,
+                output_path=output_fname, verbose=True) as headset:
         while True:
             try:
                 packet = headset.dequeue()
