@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
+
 def test_connection():
     import time
     import BB8_driver
-    import sys
 
     bb8 = BB8_driver.Sphero()
     bb8.connect()
@@ -27,7 +27,6 @@ def test_connection():
     bb8.disconnect()
     print 'disconnected'
 
-    sys.exit(1)
 
 if __name__ == "__main__":
     test_connection()
