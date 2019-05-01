@@ -93,6 +93,7 @@ def calc(x, fmin, fmax, fs=sample_freq):
 
 def roll(clockwise):
     global bb
+    bb = dummy.bb
     global heading
     global angle
     if clockwise:
@@ -110,6 +111,7 @@ def roll(clockwise):
 
 def color(c):
     global bb
+    bb = dummy.bb
     bb.cmd(0x02, 0x20, c)
 
 
