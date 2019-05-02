@@ -59,7 +59,7 @@ class BB8(btle.DefaultDelegate):
         chk ^= 255
 
         msg = [0xff, sop2, did, cid, seq, dlen] + data + [chk]
-        print 'cmd:', ' '.join([chr(c).encode('hex') for c in msg])
+        # print 'cmd:', ' '.join([chr(c).encode('hex') for c in msg])
         # Note: withResponse is very important
         # Most commands won't work without it.
         self.roll.write(''.join([chr(c) for c in msg]), withResponse=True)
