@@ -59,14 +59,15 @@ try:
     bb = BB8(MAC_ADDR)
     bb.cmd(0x02, 0x20, [0x10, 0x10, 0x10, 0])
     bb.cmd(0x02, 0x21, [0xff])
-    heading = 0
-    angle = 60
-    purple = [0xff, 0x00, 0xff, 0]
-    green = [0x00, 0xff, 0x00, 0]
-    yellow = [0xff, 0xff, 0x00, 0]
-    dummy.bb = bb
 except:
-    pass
+    print "error connecting."
+heading = 0
+angle = 20
+purple = [0xff, 0x00, 0xff, 0]
+green = [0x00, 0xff, 0x00, 0]
+yellow = [0xff, 0xff, 0x00, 0]
+dummy.bb = bb
+
 
 # abt value from the previous window
 previous_avg = 0
@@ -159,6 +160,8 @@ def main():
     raw_input('Training Complete. Press Enter to continue...')
 
     data_arr = []
+    inst_color = None
+    inst_direction = None
     with Emotiv(display_output=False, write=True, verbose=True) as headset:
         while True:
             try:
@@ -212,24 +215,29 @@ def main():
                         print 'O2 Alpha/Theta:', abt_o2
                         print 'Avg Alpha/Theta:', abt_avg, '|', 'Trained Avg Alpha/Theta:', abt_trained
 
-                        if use_abt_trained == False:
+                        if not use_abt_trained:
                             # or abs(o2_amplitude > max_amplitude):
                             if abs(o1_amplitude) > max_amplitude:
                                 print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
                                 print 'color(yellow)'
-                                color(yellow)
-
+                                # color(yellow)
+                                inst_color = yellow
+                                inst_direction = None
                             # might change to < if value decreases in each successive window (meditative state)
                             elif abt_avg > previous_avg:
                                 print 'color(purple)'
-                                color(purple)
+                                # color(purple)
+                                inst_color = purple
                                 print 'roll(False)'
-                                roll(False)
+                                # roll(False)
+                                inst_direction = False
                             else:
                                 print 'color(green)'
-                                color(green)
+                                # color(green)
+                                inst_color = green
                                 print 'roll(True)'
-                                roll(True)
+                                # roll(True)
+                                inst_direction = True
 
                             previous_avg = abt_avg
 
@@ -238,22 +246,38 @@ def main():
                             if abs(o1_amplitude) > max_amplitude:
                                 print '-*- o1_amp:', o1_amplitude, '|', 'o2_amp:', o2_amplitude
                                 print 'color(yellow)'
-                                color(yellow)
+                                # color(yellow)
+                                inst_color = yellow
+                                inst_direction = None
                             elif abt_avg > abt_trained:
                                 print 'color(purple)'
-                                color(purple)
+                                # color(purple)
+                                inst_color = purple
                                 print 'roll(False)'
-                                roll(False)
+                                # roll(False)
+                                inst_direction = False
                             else:
                                 print 'color(green)'
-                                color(green)
+                                # color(green)
+                                inst_color = green
                                 print 'roll(True)'
-                                roll(True)
+                                # roll(True)
+                                inst_direction = True
 
                         data_arr = []
                         # now send it and wait for a bit
                         # outlet.push_sample(power_values_delta)
                         time.sleep(1.0 / sample_freq)
+
+                    # constant rolling, only updated when new packet group is calculated
+                    # every 16th packet, to give time for rolling
+                    if (len(data_arr) + 1) % 16 == 0:
+                        if inst_color is not None:
+                            print "color(%s)" % inst_color
+                            color(inst_color)
+                        if inst_direction is not None:
+                            print "roll(%s)" % inst_direction
+                            roll(inst_direction)
                 # else:
                     # break
             except KeyboardInterrupt:
