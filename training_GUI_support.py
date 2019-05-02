@@ -35,6 +35,7 @@ except ImportError:
 abt_trained = 0
 use_abt_trained = True
 
+
 def set_Tk_var():
     global choice
     choice = tk.StringVar()

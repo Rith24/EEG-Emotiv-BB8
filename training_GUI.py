@@ -103,11 +103,11 @@ class Toplevel1:
 
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
-        _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
-        _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9'  # X11 color: 'gray85'
-        _ana1color = '#d9d9d9'  # X11 color: 'gray85'
-        _ana2color = '#ececec'  # Closest X11 color: 'gray92'
+        # _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
+        # _fgcolor = '#000000'  # X11 color: 'black'
+        # _compcolor = '#d9d9d9'  # X11 color: 'gray85'
+        # _ana1color = '#d9d9d9'  # X11 color: 'gray85'
+        # _ana2color = '#ececec'  # Closest X11 color: 'gray92'
 
         top.geometry("600x450+695+256")
         top.title("New Toplevel")
@@ -191,8 +191,8 @@ class Toplevel1:
         self.Entry1.configure(selectforeground="black")
 
         self.Frame1 = tk.Frame(top)
-        self.Frame1.place(relx=0.183, rely=0.044, relheight=0.167
-                          , relwidth=0.608)
+        self.Frame1.place(relx=0.183, rely=0.044,
+                          relheight=0.167, relwidth=0.608)
         self.Frame1.configure(relief='groove')
         self.Frame1.configure(borderwidth="2")
         self.Frame1.configure(relief='groove')
@@ -213,12 +213,13 @@ class Toplevel1:
         self.Label4.configure(text='''TRAINING MODULE''')
 
         self.Radiobutton1 = tk.Radiobutton(top)
-        self.Radiobutton1.place(relx=0.65, rely=0.311, relheight=0.193
-                                , relwidth=0.26)
+        self.Radiobutton1.place(relx=0.65, rely=0.311,
+                                relheight=0.193, relwidth=0.26)
         self.Radiobutton1.configure(activebackground="#ececec")
         self.Radiobutton1.configure(activeforeground="#000000")
         self.Radiobutton1.configure(background="#d9d9d9")
-        self.Radiobutton1.configure(command=training_GUI_support.setComparisonMode)
+        self.Radiobutton1.configure(
+            command=training_GUI_support.setComparisonMode)
         self.Radiobutton1.configure(disabledforeground="#a3a3a3")
         self.Radiobutton1.configure(foreground="#000000")
         self.Radiobutton1.configure(highlightbackground="#d9d9d9")
@@ -229,18 +230,19 @@ class Toplevel1:
         self.Radiobutton1.configure(variable=training_GUI_support.choice)
 
         self.Radiobutton2 = tk.Radiobutton(top)
-        self.Radiobutton2.place(relx=0.65, rely=0.467, relheight=0.138
-                                , relwidth=0.308)
+        self.Radiobutton2.place(relx=0.65, rely=0.467,
+                                relheight=0.138, relwidth=0.308)
         self.Radiobutton2.configure(activebackground="#ececec")
         self.Radiobutton2.configure(activeforeground="#000000")
         self.Radiobutton2.configure(background="#d9d9d9")
-        self.Radiobutton2.configure(command=training_GUI_support.setComparisonMode)
+        self.Radiobutton2.configure(
+            command=training_GUI_support.setComparisonMode)
         self.Radiobutton2.configure(disabledforeground="#a3a3a3")
         self.Radiobutton2.configure(foreground="#000000")
         self.Radiobutton2.configure(highlightbackground="#d9d9d9")
         self.Radiobutton2.configure(highlightcolor="black")
         self.Radiobutton2.configure(justify='left')
-        self.Radiobutton2.configure(text='''Use instantaneous abt comparison''')
+        self.Radiobutton2.configure(text='''Use live abt''')
         self.Radiobutton2.configure(value="2")
         self.Radiobutton2.configure(variable=training_GUI_support.choice)
 
@@ -292,7 +294,6 @@ class Toplevel1:
         self.Label5.configure(foreground="#000000")
         self.Label5.configure(text='''BB8 Connection''')
         self.Label5.configure(width=147)
-
 
 
 if __name__ == '__main__':
