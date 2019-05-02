@@ -54,16 +54,19 @@ thresh_low = -100
 thresh_high = 100
 max_amplitude = 200
 
-MAC_ADDR = 'F2:D8:37:4B:CE:F1'
-bb = BB8(MAC_ADDR)
-bb.cmd(0x02, 0x20, [0x10, 0x10, 0x10, 0])
-bb.cmd(0x02, 0x21, [0xff])
-heading = 0
-angle = 60
-purple = [0xff, 0x00, 0xff, 0]
-green = [0x00, 0xff, 0x00, 0]
-yellow = [0xff, 0xff, 0x00, 0]
-dummy.bb = bb
+try:
+    MAC_ADDR = 'F2:D8:37:4B:CE:F1'
+    bb = BB8(MAC_ADDR)
+    bb.cmd(0x02, 0x20, [0x10, 0x10, 0x10, 0])
+    bb.cmd(0x02, 0x21, [0xff])
+    heading = 0
+    angle = 60
+    purple = [0xff, 0x00, 0xff, 0]
+    green = [0x00, 0xff, 0x00, 0]
+    yellow = [0xff, 0xff, 0x00, 0]
+    dummy.bb = bb
+except:
+    pass
 
 # abt value from the previous window
 previous_avg = 0
@@ -156,13 +159,7 @@ def main():
     raw_input('Training Complete. Press Enter to continue...')
 
     data_arr = []
-    ts = str(datetime.now()).replace(':', '-')
-    output_fname = "emotiv_session_%s.csv" % ts
-    # create the file before trying to write to it
-    f = open(output_fname, "w")
-    f.close()
-    with Emotiv(display_output=False, write=True,
-                output_path=output_fname, verbose=True) as headset:
+    with Emotiv(display_output=False, write=True, verbose=True) as headset:
         while True:
             try:
                 packet = headset.dequeue()
