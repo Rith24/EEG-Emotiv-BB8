@@ -17,6 +17,7 @@ sudo python -m pip install -U pytest
 sudo python -m pip install -U future
 sudo python -m pip install -U mne
 sudo python -m pip install -U pygame
+sudo python -m pip install -U playsound
 
 mkdir -p ~/Documents/GitHub
 
