@@ -5,6 +5,9 @@ from datetime import datetime
 import numpy as np
 import scipy
 from scipy.signal import butter, lfilter, periodogram
+import pygst
+pygst.require('0.10')
+import gst
 from playsound import playsound
 # from pylsl import StreamInfo, StreamOutlet
 from emokit.emotiv import Emotiv
