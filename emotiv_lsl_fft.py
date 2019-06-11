@@ -7,7 +7,7 @@ import scipy
 from scipy.signal import butter, lfilter, periodogram
 import pygst
 pygst.require('0.10')
-import gst
+from gi.repository import gst
 from playsound import playsound
 # from pylsl import StreamInfo, StreamOutlet
 from emokit.emotiv import Emotiv
