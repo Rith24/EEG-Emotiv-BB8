@@ -5,10 +5,7 @@ from datetime import datetime
 import numpy as np
 import scipy
 from scipy.signal import butter, lfilter, periodogram
-import pygst
-pygst.require('0.10')
-from gi.repository import Gst
-from playsound import playsound
+from os import system
 # from pylsl import StreamInfo, StreamOutlet
 from emokit.emotiv import Emotiv
 # from emoemu import Emotiv
@@ -270,7 +267,7 @@ def main():
                                     print 'roll(False)'
                                     # roll(False)
                                     inst_direction = False
-                                    playsound('audio0.wav')
+                                    system('aplay audio0.wav')
                                 else:
                                     print 'color(green)'
                                     # color(green)
@@ -278,7 +275,7 @@ def main():
                                     print 'roll(True)'
                                     # roll(True)
                                     inst_direction = True
-                                    playsound('audio1.wav')
+                                    system('aplay audio1.wav')
 
                             data_arr = []
                             # now send it and wait for a bit
